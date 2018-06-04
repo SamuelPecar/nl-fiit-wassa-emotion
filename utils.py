@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence, one_hot
 
@@ -17,7 +18,7 @@ def load_dataset(train_file, test_file, test_labels, sep='\t', header=None):
     test_x = np.asarray(test[:1000, 1])
     test_y = np.asarray(test_label[:1000, 0])
 
-    return train_x, train_y, test_x, test_y, len(max(train_x, key=len).split())
+    return train_x, train_y, test_x, test_y, len(max(train_x[:10000], key=len).split())
 
 
 def create_vocabulary(train_x, test_x):
@@ -56,6 +57,18 @@ def labels_to_indices(y, word_to_index, classes):
     y_indices = np.asarray(y_indices, dtype='int32')
 
     return np.eye(classes)[y_indices.reshape(-1)]
+
+
+def load_embeddings(filepath='data/glove.6b.50d.txt'):
+    embeddings_index = {}
+    with open(os.path.join(filepath)) as f:
+        i = 0
+        for line in f:
+            values = line.split()
+            word = values[0]
+            coefs = np.asarray(values[1:], dtype='float32')
+            embeddings_index[word] = coefs
+        return embeddings_index
 
 
 def plot_model_history(model_history):

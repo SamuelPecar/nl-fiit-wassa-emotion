@@ -4,6 +4,7 @@ import model_utils
 classes = 6
 epochs = 20
 batch_size = 32
+dim = 50
 
 labels_to_index = {
     "sad": 0,
@@ -13,6 +14,8 @@ labels_to_index = {
     "anger": 4,
     "fear": 5
 }
+
+print('Preparing data')
 
 train_x, train_y, test_x, test_y, max_string_length = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels')
 
@@ -24,7 +27,14 @@ test_y_oh = utils.labels_to_indices(test_y, labels_to_index, classes)
 train_x_indices = utils.sentences_to_indices(train_x, words_to_index, max_len=max_string_length)
 test_x_indices = utils.sentences_to_indices(test_x, words_to_index, max_len=max_string_length)
 
-model = model_utils.get_model((max_string_length,), {}, vocab_length, classes)
+print('Creating embeding layer')
+
+word_embedings = utils.load_embeddings()
+embeddings_layer = model_utils.create_embedding_layer(word_embedings, words_to_index, len(words_to_index), output_dim=dim)
+
+print('Creating model')
+
+model = model_utils.get_model((max_string_length,), embeddings_layer, vocab_length, classes)
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 callbacks = model_utils.get_callbacks()
