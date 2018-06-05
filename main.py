@@ -5,6 +5,7 @@ classes = 6
 epochs = 20
 batch_size = 32
 dim = 50
+partition = 10000
 
 labels_to_index = {
     "sad": 0,
@@ -17,7 +18,7 @@ labels_to_index = {
 
 print('Preparing data')
 
-train_x, train_y, test_x, test_y, max_string_length = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels')
+train_x, train_y, test_x, test_y, max_string_length = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=partition)
 
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, test_x)
 
@@ -29,8 +30,9 @@ test_x_indices = utils.sentences_to_indices(test_x, words_to_index, max_len=max_
 
 print('Creating embeding layer')
 
-word_embedings = utils.load_embeddings()
-embeddings_layer = model_utils.create_embedding_layer(word_embedings, words_to_index, len(words_to_index), output_dim=dim)
+# word_embedings = utils.load_embeddings()
+# embeddings_layer = model_utils.create_embedding_layer(word_embedings, words_to_index, len(words_to_index), output_dim=dim)
+embeddings_layer = {}
 
 print('Creating model')
 
@@ -38,7 +40,7 @@ model = model_utils.get_model((max_string_length,), embeddings_layer, vocab_leng
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 callbacks = model_utils.get_callbacks()
-model_info = model.fit(train_x_indices, train_y_oh, epochs=epochs, batch_size=batch_size, callbacks=callbacks, shuffle=True)
+model_info = model.fit(train_x_indices, train_y_oh, epochs=epochs, batch_size=batch_size, validation_split=0.1, callbacks=callbacks, shuffle=True)
 utils.plot_model_history(model_info)
 
 print('predict values model')

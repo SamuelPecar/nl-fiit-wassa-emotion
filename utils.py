@@ -7,18 +7,21 @@ from keras.preprocessing.text import Tokenizer, text_to_word_sequence, one_hot
 tokenizer = Tokenizer()
 
 
-def load_dataset(train_file, test_file, test_labels, sep='\t', header=None):
-    train = pd.read_csv(train_file, sep=sep, header=header).values
+def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=10000):
+    train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
     test = pd.read_csv(test_file, sep=sep, header=header).values
     test_label = pd.read_csv(test_labels, sep=sep, header=header).values
 
-    train_x = np.asarray(train[:10000, 1])
-    train_y = np.asarray(train[:10000, 0])
+    train_x = np.asarray(train[:partition, 1])
+    train_y = np.asarray(train[:partition, 0])
 
-    test_x = np.asarray(test[:1000, 1])
-    test_y = np.asarray(test_label[:1000, 0])
+    test_x = np.asarray(test[:, 1])
+    test_y = np.asarray(test_label[:, 0])
 
-    return train_x, train_y, test_x, test_y, len(max(train_x[:10000], key=len).split())
+    max_len_train = len(max(train_x[:], key=len).split())
+    max_len_test = len(max(test_x[:], key=len).split())
+
+    return train_x, train_y, test_x, test_y, max_len_train if max_len_train > max_len_test else max_len_test
 
 
 def create_vocabulary(train_x, test_x):
