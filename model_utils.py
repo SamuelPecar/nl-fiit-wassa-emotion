@@ -6,7 +6,7 @@ import numpy as np
 
 
 def get_callbacks():
-    earlystop = EarlyStopping(monitor='val_loss', min_delta=0.001, patience=2, verbose=1, mode='auto')
+    earlystop = EarlyStopping(monitor='val_acc', min_delta=0.001, patience=2, verbose=1, mode='auto')
 
     return [earlystop]
 

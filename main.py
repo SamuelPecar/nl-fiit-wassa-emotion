@@ -28,10 +28,10 @@ test_y_oh = utils.labels_to_indices(test_y, labels_to_index, classes)
 train_x_indices = utils.sentences_to_indices(train_x, words_to_index, max_len=max_string_length)
 test_x_indices = utils.sentences_to_indices(test_x, words_to_index, max_len=max_string_length)
 
-print('Creating embeding layer')
+print('Creating embedding layer')
 
-# word_embedings = utils.load_embeddings()
-# embeddings_layer = model_utils.create_embedding_layer(word_embedings, words_to_index, len(words_to_index), output_dim=dim)
+# word_embeddings = utils.load_embeddings()
+# embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=dim)
 embeddings_layer = {}
 
 print('Creating model')
