@@ -4,10 +4,10 @@ import model_utils
 classes = 6
 epochs = 20
 batch_size = 64
-dim = 300
+dim = 200
 # partition = 10000
 partition = None
-
+embeddings_path = 'data/glove.twitter.27B.200d.txt'
 labels_to_index = {
     "sad": 0,
     "joy": 1,
@@ -31,12 +31,12 @@ test_x_indices = utils.sentences_to_indices(test_x, words_to_index, max_len=max_
 
 print('Creating embedding layer')
 
-word_embeddings = utils.load_embeddings()
+word_embeddings = utils.load_embeddings(filepath=embeddings_path)
 embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=dim)
 
 print('Creating model')
 
-model = model_utils.get_model((max_string_length,), embeddings_layer, vocab_length, classes)
+model = model_utils.get_model((max_string_length,), embeddings_layer, classes)
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 callbacks = model_utils.get_callbacks()
