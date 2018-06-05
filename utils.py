@@ -7,13 +7,17 @@ from keras.preprocessing.text import Tokenizer, text_to_word_sequence, one_hot
 tokenizer = Tokenizer()
 
 
-def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=10000):
+def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
     train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
     test = pd.read_csv(test_file, sep=sep, header=header).values
     test_label = pd.read_csv(test_labels, sep=sep, header=header).values
 
-    train_x = np.asarray(train[:partition, 1])
-    train_y = np.asarray(train[:partition, 0])
+    if partition:
+        train_x = np.asarray(train[:partition, 1])
+        train_y = np.asarray(train[:partition, 0])
+    else:
+        train_x = np.asarray(train[:, 1])
+        train_y = np.asarray(train[:, 0])
 
     test_x = np.asarray(test[:, 1])
     test_y = np.asarray(test_label[:, 0])
@@ -62,7 +66,7 @@ def labels_to_indices(y, word_to_index, classes):
     return np.eye(classes)[y_indices.reshape(-1)]
 
 
-def load_embeddings(filepath='data/glove.6b.50d.txt'):
+def load_embeddings(filepath='data/glove.6b.300d.txt'):
     embeddings_index = {}
     with open(os.path.join(filepath)) as f:
         i = 0
