@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 
 emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt')]
