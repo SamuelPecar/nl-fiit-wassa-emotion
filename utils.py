@@ -1,8 +1,11 @@
 import pandas as pd
 import numpy as np
 import os
+import operator
 import matplotlib.pyplot as plt
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence, one_hot
+import contextlib
+import sys
 
 tokenizer = Tokenizer()
 
@@ -66,7 +69,7 @@ def labels_to_indices(y, word_to_index, classes):
     return np.eye(classes)[y_indices.reshape(-1)]
 
 
-def load_embeddings(filepath='data/glove.6b.300d.txt'):
+def load_embeddings(filepath='data/glove.840B.300d.txt'):
     embeddings_index = {}
     with open(os.path.join(filepath)) as f:
         i = 0
@@ -93,3 +96,41 @@ def plot_model_history(model_history):
     axs[1].set_xticks(np.arange(1, len(model_history.history['loss']) + 1), len(model_history.history['loss']) / 10)
     axs[1].legend(['train', 'val'], loc='best')
     plt.show()
+
+class DummyFile(object):
+    def write(self, x): pass
+
+@contextlib.contextmanager
+def nostdout():
+    save_stdout = sys.stdout
+    sys.stdout = DummyFile()
+    yield
+    sys.stdout = save_stdout
+
+
+
+if __name__ == '__main__':
+    train_x, _, test_x, _, length = load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=None)
+
+    hashtag_dict = dict()
+
+    for x in train_x:
+        words = x.split(' ')
+        for y in words:
+            if y is not ''and not y == '#[#TRIGGERWORD#]' and y[0] == '#':
+
+                if y in hashtag_dict:
+                    hashtag_dict[y] += 1
+                else:
+                    hashtag_dict[y] = 1
+
+    print(hashtag_dict)
+    print(len(hashtag_dict.keys()))
+    sorted_x = sorted(hashtag_dict.items(), key=operator.itemgetter(1), reverse=True)
+    print(sorted_x)
+    zz = {k: v for k, v in hashtag_dict.items() if v > 2}
+    print(len(zz.keys()))
+    print(zz)
+    #plt.figure()
+    #plt.bar(range(0,len(hashtag_dict.keys()), 1), hashtag_dict.values(), width=5)
+    #plt.show()
