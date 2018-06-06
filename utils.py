@@ -22,10 +22,7 @@ def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, part
     test_x = np.asarray(test[:, 1])
     test_y = np.asarray(test_label[:, 0])
 
-    max_len_train = len(max(train_x[:], key=len).split())
-    max_len_test = len(max(test_x[:], key=len).split())
-
-    return train_x, train_y, test_x, test_y, max_len_train if max_len_train > max_len_test else max_len_test
+    return train_x, train_y, test_x, test_y
 
 
 def create_vocabulary(train_x, test_x):

@@ -1,13 +1,14 @@
 import utils
 import model_utils
+import preprocessing
 
 classes = 6
 epochs = 20
 batch_size = 64
-dim = 200
-# partition = 10000
+dim = 25
+# partition = 1000
 partition = None
-embeddings_path = 'data/glove.twitter.27B.200d.txt'
+embeddings_path = 'data/glove.twitter.27B.25d.txt'
 labels_to_index = {
     "sad": 0,
     "joy": 1,
@@ -19,7 +20,10 @@ labels_to_index = {
 
 print('Preparing data')
 
-train_x, train_y, test_x, test_y, max_string_length = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=partition)
+train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=partition)
+
+print('Preprocessing data')
+train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x)
 
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, test_x)
 
