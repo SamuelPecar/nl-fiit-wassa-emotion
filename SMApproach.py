@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 import sent2vec
 import skipthoughts
 import keras
@@ -7,6 +7,11 @@ import numpy
 import pandas
 import torch
 import utils
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 
 class AbstractEncoder():
     def __init__(self, args):
@@ -56,13 +61,23 @@ class Infersent(AbstractEncoder):
         return definitions_emb
 
 def experiment1(encoder):
-    train_x, train_y, test_x, test_y, max_string_length = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=None)
+    train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=None)
     train_x = numpy.pad(train_x, (1, 0), 'constant', constant_values=0)
-    train_x[0] = "angry , sad , joy , disgust , fear , surprise"
+    train_x[0] = u"angry , sad , joy , disgust , fear , surprise"
 
-    train_x_list = train_x.tolist()
+
+    train_x_list = list()
+
+    for sentence in train_x:
+        train_x_list.append(unicode(sentence))
+
+    print( train_x_list[0:10])
 
     encoder_instance = encoder(train_x_list)
+
+
+
+
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 import utils
 import model_utils
 import preprocessing
+import evaluation
 
 classes = 6
 epochs = 20
@@ -23,7 +24,7 @@ print('Preparing data')
 train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=partition)
 
 print('Preprocessing data')
-train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x)
+train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
 
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, test_x)
 
@@ -42,7 +43,7 @@ print('Creating model')
 
 model = model_utils.get_model((max_string_length,), embeddings_layer, classes)
 model.summary()
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[['accuracy', evaluation.f1_c, evaluation.precision, evaluation.recall]])
 callbacks = model_utils.get_callbacks()
 model_info = model.fit(train_x_indices, train_y_oh, epochs=epochs, batch_size=batch_size, validation_split=0.1, callbacks=callbacks, shuffle=True)
 utils.plot_model_history(model_info)

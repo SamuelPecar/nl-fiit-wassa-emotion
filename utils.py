@@ -11,7 +11,8 @@ tokenizer = Tokenizer()
 
 
 def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
-    train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
+    #train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
+    train = pd.read_csv(train_file, sep=sep, header=header).values
     test = pd.read_csv(test_file, sep=sep, header=header).values
     test_label = pd.read_csv(test_labels, sep=sep, header=header).values
 
