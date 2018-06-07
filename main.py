@@ -6,10 +6,10 @@ import evaluation
 classes = 6
 epochs = 20
 batch_size = 64
-dim = 25
-# partition = 1000
-partition = None
-embeddings_path = 'data/glove.twitter.27B.25d.txt'
+dim = 200
+partition = 10000
+# partition = None
+embeddings_path = 'data/glove.twitter.27B.200d.txt'
 labels_to_index = {
     "sad": 0,
     "joy": 1,

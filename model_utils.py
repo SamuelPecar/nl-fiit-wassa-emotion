@@ -18,7 +18,7 @@ def create_embedding_layer(embeddings_index, words_to_index, vocab_length=100, o
         if word in embeddings_index:
             emb_matrix[index, :] = embeddings_index[word]
 
-    embedding_layer = Embedding(vocab_length + 1, output_dim, trainable=False)
+    embedding_layer = Embedding(vocab_length + 1, output_dim, trainable=True)
     embedding_layer.build((None,))
     embedding_layer.set_weights([emb_matrix])
 
@@ -33,6 +33,5 @@ def get_model(input_shape, embedding_layer, classes=6):
     x = Bidirectional(LSTM(units=128, return_sequences=False))(embeddings)
     x = Dropout(rate=0.5)(x)
     x = Dense(units=classes, activation="softmax")(x)
-    x = Activation('softmax')(x)
 
     return Model(inputs=sentence_indices, outputs=x)
