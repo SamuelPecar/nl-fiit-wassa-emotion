@@ -4,9 +4,9 @@ from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 import numpy as np
 
-
-def get_callbacks():
-    earlystop = EarlyStopping(monitor='val_acc', min_delta=0.001, patience=2, verbose=1, mode='auto')
+# val_f1_c
+def get_callbacks(early_stop_monitor='val_acc'):
+    earlystop = EarlyStopping(monitor=early_stop_monitor, min_delta=0.001, patience=4, verbose=1, mode='auto')
 
     return [earlystop]
 
