@@ -1,3 +1,4 @@
+import sys
 import utils
 import model_utils
 import preprocessing
@@ -18,6 +19,9 @@ labels_to_index = {
     "anger": 4,
     "fear": 5
 }
+
+if sys.version_info[0] < 3:
+    raise Exception("Must be using Python 3")
 
 print('Preparing data')
 
