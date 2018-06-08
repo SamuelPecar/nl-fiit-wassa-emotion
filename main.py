@@ -43,16 +43,19 @@ print('Creating model')
 
 model = model_utils.get_model((max_string_length,), embeddings_layer, classes)
 model.summary()
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[['accuracy', evaluation.f1_c, evaluation.precision, evaluation.recall]])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', evaluation.f1_c, evaluation.precision, evaluation.recall])
 callbacks = model_utils.get_callbacks()
 model_info = model.fit(train_x_indices, train_y_oh, epochs=epochs, batch_size=batch_size, validation_split=0.1, callbacks=callbacks, shuffle=True)
 utils.plot_model_history(model_info)
 
 print('predict values model')
 
-loss, acc = model.evaluate(test_x_indices, test_y_oh)
+loss, acc, f1, precision, recall = model.evaluate(test_x_indices, test_y_oh)
 
 print('evaluate model')
 
 print("Loss = ", loss)
 print("Test accuracy = ", acc)
+print("F1= ", f1)
+print("Precision = ", precision)
+print("Recall = ", recall)
