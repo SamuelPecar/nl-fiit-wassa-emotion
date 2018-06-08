@@ -11,7 +11,7 @@ tokenizer = Tokenizer()
 
 
 def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
-    #train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
+    # train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
     train = pd.read_csv(train_file, sep=sep, header=header).values
     test = pd.read_csv(test_file, sep=sep, header=header).values
     test_label = pd.read_csv(test_labels, sep=sep, header=header).values
@@ -95,8 +95,10 @@ def plot_model_history(model_history):
     axs[1].legend(['train', 'val'], loc='best')
     plt.show()
 
+
 class DummyFile(object):
     def write(self, x): pass
+
 
 @contextlib.contextmanager
 def nostdout():
@@ -104,7 +106,6 @@ def nostdout():
     sys.stdout = DummyFile()
     yield
     sys.stdout = save_stdout
-
 
 
 if __name__ == '__main__':
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     for x in train_x:
         words = x.split(' ')
         for y in words:
-            if y is not ''and not y == '#[#TRIGGERWORD#]' and y[0] == '#':
+            if y is not '' and not y == '#[#TRIGGERWORD#]' and y[0] == '#':
 
                 if y in hashtag_dict:
                     hashtag_dict[y] += 1
@@ -129,6 +130,6 @@ if __name__ == '__main__':
     zz = {k: v for k, v in hashtag_dict.items() if v > 2}
     print(len(zz.keys()))
     print(zz)
-    #plt.figure()
-    #plt.bar(range(0,len(hashtag_dict.keys()), 1), hashtag_dict.values(), width=5)
-    #plt.show()
+    # plt.figure()
+    # plt.bar(range(0,len(hashtag_dict.keys()), 1), hashtag_dict.values(), width=5)
+    # plt.show()
