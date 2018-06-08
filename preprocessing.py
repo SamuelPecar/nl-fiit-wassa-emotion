@@ -2,8 +2,8 @@
 import re
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 
 emoticon_dict= {
     u'\U0001f600': 'smile',
@@ -182,8 +182,7 @@ def escape_chars(text):
     text = text.replace("…", " … ")
     text = text.replace("*", " * ")
 
-    text = re.sub(r"''", " \" ", text)
-    text = re.sub(r"[”“❝„\"‘´’]", " \' ", text)
+    text = re.sub(r"[‘´’]", "\'", text)
 
     text = re.sub(" '", " \' ", text)
     text = re.sub("' ", " \' ", text)
