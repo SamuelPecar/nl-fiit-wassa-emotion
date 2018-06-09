@@ -67,6 +67,13 @@ def labels_to_indices(y, word_to_index, classes):
     return np.eye(classes)[y_indices.reshape(-1)]
 
 
+def indices_to_labels(y, index_to_word):
+    y_classes = []
+    for i in range(len(y)):
+        y_classes.append(index_to_word[y[i]])
+    return y_classes
+
+
 def load_embeddings(filepath='data/glove.840B.300d.txt'):
     embeddings_index = {}
     with open(os.path.join(filepath)) as f:

@@ -13,7 +13,7 @@ print('Preparing data')
 train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=config.partition)
 
 print('Preprocessing data')
-train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
+train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=config.emoji2word)
 
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, test_x)
 
@@ -32,19 +32,23 @@ print('Creating model')
 
 model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes)
 model.summary()
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', evaluation.f1_c, evaluation.precision, evaluation.recall])
-callbacks = model_utils.get_callbacks()
-model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.1, callbacks=callbacks, shuffle=True)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
+callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor, early_stop_patience=config.early_stop_patience, early_stop_mode=config.early_stop_mode)
+model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.1, callbacks=callbacks, shuffle=True, verbose=config.verbose)
 utils.plot_model_history(model_info)
 
 print('predict values model')
 
-loss, acc, f1, precision, recall = model.evaluate(test_x_indices, test_y_oh)
-
-print('evaluate model')
-
+loss, acc, f1, precision, recall = model.evaluate(test_x_indices, test_y_oh, verbose=config.verbose)
+print('Model evaluation')
 print("Loss = ", loss)
 print("Test accuracy = ", acc)
-print("F1= ", f1)
+print("F1 = ", f1)
 print("Precision = ", precision)
 print("Recall = ", recall)
+print('')
+
+probabilities = model.predict(test_x_indices)
+predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
+
+evaluation.calculate_prf(test_y.tolist(), predictions)
