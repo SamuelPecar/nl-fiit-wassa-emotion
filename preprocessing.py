@@ -15,6 +15,7 @@ def escape_emoji(text):
         text = text.replace(emoji, ' ' + emoji + ' ')
     return text
 
+
 def replace_emoji(text):
     uni_sent = unicode(text)
     for key in emotions.emoticon_dict.keys():
@@ -22,6 +23,7 @@ def replace_emoji(text):
     utf_sent = unicode.encode(uni_sent)
     utf_sent = re.sub("\xf0...", 'emoticon', utf_sent)
     return utf_sent
+
 
 def escape_chars(text):
     text = text.replace("[NEWLINE]", ". ")
@@ -57,20 +59,21 @@ def escape_chars(text):
 
 
 def escape_text(x, emoji2word=False):
+    max_len = 0
     for i in range(len(x)):
         x[i] = escape_emoji(x[i])
         if emoji2word:
             x[i] = replace_emoji(x[i])
         x[i] = escape_chars(x[i])
 
-    return x
+        if len(x[i].split()) > max_len:
+            max_len = len(x[i].split())
+
+    return x, max_len
 
 
 def preprocessing_pipeline(train_x, test_x, emoji2word=False):
-    train_x = escape_text(train_x, emoji2word)
-    test_x = escape_text(test_x, emoji2word)
-
-    max_len_train = len(max(train_x[:], key=len).split())
-    max_len_test = len(max(test_x[:], key=len).split())
+    train_x, max_len_train = escape_text(train_x, emoji2word)
+    test_x, max_len_test = escape_text(test_x, emoji2word)
 
     return train_x, test_x, max_len_train if max_len_train > max_len_test else max_len_test
