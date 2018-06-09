@@ -3,7 +3,7 @@ import numpy as np
 import os
 import operator
 import matplotlib.pyplot as plt
-from keras.preprocessing.text import Tokenizer, text_to_word_sequence, one_hot
+from keras.preprocessing.text import Tokenizer
 import contextlib
 import sys
 
