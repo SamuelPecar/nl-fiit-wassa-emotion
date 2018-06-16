@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding
+from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 import numpy as np
@@ -25,6 +25,19 @@ def create_embedding_layer(embeddings_index, words_to_index, vocab_length=100, o
 
     return embedding_layer
 
+def get_SM_model(input_shape, classes=6):
+    sentences = Input(shape=input_shape, dtype='float32')
+
+    x = Reshape((input_shape[0]*input_shape[1],))(sentences)
+
+    x = Dense(units=input_shape[0]*input_shape[1], activation="tanh")(x)
+    #x = Dropout(rate=0.2)(x)
+    x = Dense(units=input_shape[0]*input_shape[1], activation="tanh")(x)
+    #x = Dropout(rate=0.2)(x)
+    x = Dense(units=classes, activation="softmax")(x)
+
+
+    return Model(inputs=sentences, outputs=x)
 
 def get_model(input_shape, embedding_layer, classes=6):
     sentence_indices = Input(shape=input_shape, dtype='int32')
