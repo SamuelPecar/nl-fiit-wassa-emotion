@@ -2,11 +2,6 @@
 import re
 from files import emotions
 
-import sys
-
-# reload(sys)
-# sys.setdefaultencoding('utf8')
-
 emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt')]
 
 
@@ -17,11 +12,10 @@ def escape_emoji(text):
 
 
 def replace_emoji(text):
-    uni_sent = unicode(text)
+    uni_sent = str(text)
     for key in emotions.emoticon_dict.keys():
         uni_sent = uni_sent.replace(key, emotions.emoticon_dict[key])
-    utf_sent = unicode.encode(uni_sent)
-    utf_sent = re.sub("\xf0...", 'emoticon', utf_sent)
+    utf_sent = re.sub("\xf0...", 'emoticon', uni_sent)
     return utf_sent
 
 
