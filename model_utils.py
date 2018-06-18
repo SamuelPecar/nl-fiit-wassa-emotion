@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape
+from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l1_l2
@@ -35,6 +35,21 @@ def get_SM_model(input_shape, classes=6):
     #x = Dropout(rate=0.2)(x)
     x = Dense(units=input_shape[0]*input_shape[1], activation="tanh")(x)
     #x = Dropout(rate=0.2)(x)
+    x = Dense(units=classes, activation="softmax")(x)
+
+
+    return Model(inputs=sentences, outputs=x)
+
+def get_SM_model_2(input_shape, classes=6):
+    sentences = Input(shape=input_shape, dtype='float32')
+
+    #x = Dense(units=1024, activation="relu")(sentences)
+    x = Dropout(0.3)(sentences)
+    x = Dense(units=128, activation="relu")(x)
+    y = Dense(units=128, activation="tanh")(sentences)
+    x = Concatenate(axis=-1)([x, y])
+    x = Dropout(rate=0.5)(x)
+    x = Dense(units=128, activation=None)(x)
     x = Dense(units=classes, activation="softmax")(x)
 
 
