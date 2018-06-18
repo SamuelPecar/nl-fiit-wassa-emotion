@@ -2,6 +2,7 @@ from keras.models import Model
 from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
+from keras.regularizers import l1_l2
 import numpy as np
 
 
@@ -43,9 +44,16 @@ def get_model(input_shape, embedding_layer, classes=6):
     sentence_indices = Input(shape=input_shape, dtype='int32')
 
     embeddings = embedding_layer(sentence_indices)
+    # embeddings = Embedding(embedding_layer + 1, 200, input_length=input_shape[0])(sentence_indices)
+    # recurrent_regularizer=l1_l2(0.01,0.01)
+    # activity_regularizer=l1_l2(0.01, 0.01)
+    # kernel_regularizer=l1_l2(0.01, 0.01)
+    # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Bidirectional(LSTM(units=128, return_sequences=False))(embeddings)
+    x = Bidirectional(LSTM(units=128, bias_regularizer=l1_l2(0.01, 0.01), return_sequences=False))(embeddings)
     x = Dropout(rate=0.5)(x)
+    # x = Bidirectional(LSTM(units=256))(x)
+    # x = Dropout(rate=0.5)(x)
     x = Dense(units=classes, activation="softmax")(x)
 
     return Model(inputs=sentence_indices, outputs=x)
