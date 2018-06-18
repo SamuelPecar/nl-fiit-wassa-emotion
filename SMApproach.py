@@ -48,7 +48,7 @@ class AbstractEncoder():
 #         return definitions_emb
 class UniversalSentenceEncoder(AbstractEncoder):
     def __init__(self, all_sentences=None):
-        self.enc = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
+        self.enc = hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/2")
         self.session = tensorflow.Session()
         self.session.run([tensorflow.global_variables_initializer(), tensorflow.tables_initializer()])
         self.sentence_ph = tensorflow.placeholder(tensorflow.string, shape=(None))
@@ -76,7 +76,7 @@ class Infersent(AbstractEncoder):
     def getName():
         return "InferSent"
 
-def prepare_data_file(encoder, dataset_size=10000, batch_size=120):
+def prepare_data_file(encoder, dataset_size=10000, batch_size=6):
     train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=dataset_size)
     train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=True)
 
@@ -92,7 +92,6 @@ def prepare_data_file(encoder, dataset_size=10000, batch_size=120):
         train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'fear'))
         train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'surprise'))
     encoder_instance = encoder(train_x_list)
-
 
     with open("data/enRep_{}_{}.csv".format(encoder.getName(), dataset_size), 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=';', quoting=csv.QUOTE_MINIMAL)
@@ -113,7 +112,8 @@ def prepare_data_file(encoder, dataset_size=10000, batch_size=120):
                 i += 1
 
 def load_data(filename, partition=None):
-    train = pd.read_csv(filename, sep=',').sample(frac=1).values
+    #train = pd.read_csv(filename, sep=',', header=None).values
+    train = pd.read_csv(filename, sep=',', header=None).sample(frac=1).values
     if not partition:
         partition = train.shape[0]
     train_x = numpy.zeros((partition, train.shape[1]-1, numpy.fromstring(train[0][1][1:-1], dtype=numpy.float32, sep=' ').shape[0]))
@@ -128,7 +128,7 @@ def load_data(filename, partition=None):
         train_x[i, 4] = numpy.fromstring(train[i, 5][1:-1], dtype=numpy.float32, sep=' ')
         train_x[i, 5] = numpy.fromstring(train[i, 6][1:-1], dtype=numpy.float32, sep=' ')
 
-        if train[i,0] == 'angry':
+        if train[i,0] == 'anger':
             train_y[i] = numpy.asarray([1, 0, 0, 0, 0, 0])
         elif train[i,0] == 'sad':
             train_y[i] = numpy.asarray([0, 1, 0, 0, 0, 0])
@@ -144,23 +144,48 @@ def load_data(filename, partition=None):
 
     return train_x, train_y
 def experiment1(encoder):
-    train_x, train_y = load_data("data/enRep_USE_None.csv", 40000)
+    #train_x, train_y = load_data("data/enRep_USE_None.csv", 40000)
+    train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels',
+                                                          partition=None)
+    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
+    encoder_instance = UniversalSentenceEncoder()
+    embeddings = numpy.zeros((train_x.shape[0], 512))
+    for i in range(0, train_x.shape[0], 1000):
+        embeddings[i:i+1000] = encoder_instance.use(train_x[i:i+1000])
+    #embeddings = encoder_instance.use(train_x)
 
-    model = model_utils.get_SM_model(train_x[0].shape)
+    train_y_l = numpy.zeros((train_y.shape[0], 6))
+    for i in range(train_y.shape[0]):
+        if train_y[i] == 'anger':
+            train_y_l[i] = numpy.asarray([1, 0, 0, 0, 0, 0])
+        elif train_y[i] == 'sad':
+            train_y_l[i] = numpy.asarray([0, 1, 0, 0, 0, 0])
+        elif train_y[i] == 'joy':
+            train_y_l[i] = numpy.asarray([0, 0, 1, 0, 0, 0])
+        elif train_y[i] == 'disgust':
+            train_y_l[i] = numpy.asarray([0, 0, 0, 1, 0, 0])
+        elif train_y[i] == 'fear':
+            train_y_l[i] = numpy.asarray([0, 0, 0, 0, 1, 0])
+        elif train_y[i] == 'surprise':
+            train_y_l[i] = numpy.asarray([0, 0, 0, 0, 0, 1])
+    model = model_utils.get_SM_model_2(embeddings[0].shape, 6)
 
+    print(embeddings.shape)
+    print(embeddings[0].shape)
     model.summary()
     model.compile(loss='categorical_crossentropy', optimizer='adam',
                   metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
     callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor,
                                           early_stop_patience=config.early_stop_patience,
                                           early_stop_mode=config.early_stop_mode)
-    model_info = model.fit(train_x, train_y, epochs=config.epochs, batch_size=config.batch_size,
+    model_info = model.fit(embeddings, train_y_l, epochs=200, batch_size=config.batch_size,
                            validation_split=0.1, shuffle=True, verbose=2)
 
 if __name__ == '__main__':
-    #experiment1(Infersent)
+    experiment1(Infersent)
     #prepare_data_file(Infersent)
-    prepare_data_file(UniversalSentenceEncoder, 200)
+    #prepare_data_file(UniversalSentenceEncoder, 5)
+    #load_data("data/enRep_USE_5.csv", None)
 
 
 
