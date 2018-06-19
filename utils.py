@@ -12,8 +12,8 @@ tokenizer = Tokenizer()
 
 def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
     # train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
-    train = pd.read_csv(train_file, sep=sep, header=header).values
-    test = pd.read_csv(test_file, sep=sep, header=header).values
+    train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).values
+    test = pd.read_csv(test_file, sep=sep, header=header, quoting=3).values
     test_label = pd.read_csv(test_labels, sep=sep, header=header).values
 
     if partition:
@@ -52,6 +52,8 @@ def sentences_to_indices(x, word_to_index, max_len):
             else:
                 x_indices[i, j] = 0
             j = j + 1
+            if j >= max_len:
+                break
 
     return x_indices
 
