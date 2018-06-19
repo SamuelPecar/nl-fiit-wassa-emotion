@@ -12,7 +12,7 @@ sad
 joy
 sad
 joy
-sad
+joy
 anger
 disgust
 surprise
@@ -63,7 +63,7 @@ fear
 fear
 fear
 fear
-sad
+joy
 joy
 anger
 anger
@@ -130,7 +130,7 @@ fear
 surprise
 anger
 joy
-sad
+joy
 surprise
 disgust
 fear
@@ -213,7 +213,7 @@ anger
 fear
 anger
 surprise
-sad
+joy
 disgust
 anger
 disgust
@@ -337,7 +337,7 @@ fear
 joy
 disgust
 disgust
-sad
+joy
 anger
 sad
 disgust
@@ -379,7 +379,7 @@ anger
 disgust
 fear
 fear
-sad
+joy
 sad
 disgust
 surprise
@@ -426,7 +426,7 @@ sad
 surprise
 disgust
 surprise
-sad
+joy
 surprise
 sad
 joy
@@ -581,7 +581,7 @@ joy
 disgust
 joy
 surprise
-sad
+joy
 anger
 fear
 surprise
@@ -619,9 +619,9 @@ surprise
 surprise
 surprise
 fear
-sad
 joy
 joy
+joy
 sad
 fear
 fear
@@ -678,7 +678,7 @@ surprise
 anger
 disgust
 anger
-sad
+joy
 disgust
 sad
 fear
@@ -1018,7 +1018,7 @@ fear
 surprise
 fear
 fear
-sad
+joy
 surprise
 disgust
 joy
@@ -1035,8 +1035,8 @@ sad
 joy
 fear
 anger
-sad
 joy
+joy
 surprise
 joy
 joy
@@ -1515,7 +1515,7 @@ surprise
 joy
 anger
 anger
-sad
+joy
 fear
 fear
 disgust
@@ -1799,12 +1799,12 @@ fear
 sad
 disgust
 anger
-sad
 sad
 sad
 sad
 sad
 joy
+joy
 sad
 surprise
 surprise
@@ -1875,7 +1875,7 @@ joy
 anger
 sad
 fear
-sad
+joy
 fear
 fear
 anger
@@ -1964,7 +1964,7 @@ disgust
 anger
 anger
 surprise
-sad
+joy
 fear
 fear
 joy
@@ -1977,7 +1977,7 @@ surprise
 surprise
 surprise
 joy
-sad
+joy
 disgust
 fear
 joy
@@ -2049,7 +2049,7 @@ surprise
 joy
 joy
 fear
-sad
+joy
 surprise
 disgust
 fear
@@ -2088,7 +2088,7 @@ disgust
 joy
 surprise
 disgust
-sad
+joy
 joy
 disgust
 anger
@@ -2182,7 +2182,7 @@ joy
 joy
 disgust
 fear
-sad
+joy
 anger
 anger
 anger
@@ -2213,7 +2213,7 @@ fear
 surprise
 sad
 disgust
-sad
+joy
 surprise
 fear
 surprise
@@ -2263,9 +2263,9 @@ anger
 disgust
 fear
 anger
-sad
+joy
 anger
-sad
+joy
 sad
 sad
 surprise
@@ -2302,7 +2302,7 @@ sad
 fear
 disgust
 fear
-sad
+joy
 anger
 disgust
 surprise
@@ -2322,8 +2322,8 @@ anger
 joy
 anger
 fear
-sad
 joy
+joy
 disgust
 sad
 sad
@@ -2379,8 +2379,8 @@ anger
 joy
 sad
 fear
-sad
 sad
+joy
 anger
 disgust
 anger
@@ -2464,7 +2464,7 @@ joy
 joy
 joy
 joy
-sad
+joy
 sad
 disgust
 surprise
@@ -2512,7 +2512,7 @@ disgust
 joy
 sad
 surprise
-sad
+joy
 anger
 anger
 fear
@@ -2549,7 +2549,7 @@ sad
 anger
 disgust
 disgust
-sad
+joy
 disgust
 sad
 surprise
@@ -2612,7 +2612,7 @@ disgust
 joy
 disgust
 sad
-sad
+joy
 sad
 anger
 disgust
@@ -2627,7 +2627,7 @@ anger
 joy
 joy
 surprise
-sad
+joy
 surprise
 anger
 anger
@@ -2655,7 +2655,7 @@ anger
 surprise
 disgust
 joy
-sad
+joy
 joy
 surprise
 anger
@@ -3007,7 +3007,7 @@ disgust
 surprise
 anger
 disgust
-sad
+joy
 fear
 joy
 surprise
@@ -3015,7 +3015,7 @@ surprise
 disgust
 sad
 sad
-sad
+joy
 disgust
 joy
 joy
@@ -3168,8 +3168,8 @@ disgust
 surprise
 joy
 fear
-sad
 joy
+joy
 surprise
 anger
 fear
@@ -3264,7 +3264,7 @@ surprise
 fear
 disgust
 disgust
-sad
+joy
 surprise
 anger
 disgust
@@ -3351,8 +3351,8 @@ sad
 surprise
 surprise
 joy
-sad
 joy
+joy
 fear
 fear
 surprise
@@ -3386,9 +3386,9 @@ anger
 disgust
 surprise
 fear
-sad
 sad
 sad
+joy
 fear
 anger
 anger
@@ -3406,7 +3406,7 @@ joy
 fear
 surprise
 anger
-sad
+joy
 disgust
 surprise
 anger
@@ -3449,8 +3449,8 @@ fear
 anger
 surprise
 surprise
-sad
 joy
+joy
 anger
 disgust
 fear
@@ -3526,9 +3526,9 @@ sad
 anger
 joy
 anger
-sad
+joy
 fear
-sad
+joy
 disgust
 fear
 surprise
@@ -3549,7 +3549,7 @@ anger
 anger
 sad
 anger
-sad
+joy
 anger
 anger
 anger
@@ -3630,7 +3630,7 @@ disgust
 fear
 fear
 joy
-sad
+joy
 surprise
 fear
 fear
@@ -3741,7 +3741,7 @@ disgust
 sad
 joy
 anger
-sad
+joy
 joy
 joy
 fear
@@ -3902,7 +3902,7 @@ surprise
 joy
 disgust
 fear
-sad
+joy
 fear
 fear
 surprise
@@ -4031,7 +4031,7 @@ surprise
 surprise
 joy
 joy
-sad
+joy
 surprise
 fear
 sad
@@ -4057,8 +4057,8 @@ sad
 joy
 sad
 fear
-sad
 sad
+joy
 anger
 sad
 surprise
@@ -4172,7 +4172,7 @@ disgust
 anger
 fear
 fear
-sad
+joy
 sad
 anger
 joy
@@ -4199,14 +4199,14 @@ anger
 anger
 fear
 joy
-sad
+joy
 sad
 surprise
 anger
 surprise
 fear
-sad
 joy
+joy
 disgust
 joy
 anger
@@ -4254,7 +4254,7 @@ sad
 surprise
 disgust
 joy
-sad
+joy
 anger
 sad
 fear
@@ -4354,7 +4354,7 @@ surprise
 disgust
 disgust
 fear
-sad
+joy
 joy
 fear
 anger
@@ -4365,7 +4365,7 @@ disgust
 disgust
 fear
 anger
-sad
+joy
 joy
 sad
 surprise
@@ -4374,7 +4374,7 @@ fear
 sad
 fear
 disgust
-sad
+joy
 surprise
 disgust
 joy
@@ -4436,7 +4436,7 @@ sad
 fear
 fear
 fear
-sad
+joy
 sad
 joy
 surprise
@@ -4537,7 +4537,7 @@ joy
 disgust
 sad
 anger
-sad
+joy
 joy
 fear
 anger
@@ -4585,7 +4585,7 @@ disgust
 fear
 fear
 surprise
-sad
+joy
 sad
 joy
 anger
@@ -4602,7 +4602,7 @@ disgust
 sad
 surprise
 fear
-sad
+joy
 surprise
 joy
 surprise
@@ -4723,7 +4723,7 @@ anger
 joy
 surprise
 surprise
-sad
+joy
 anger
 disgust
 disgust
@@ -4747,7 +4747,7 @@ disgust
 disgust
 anger
 disgust
-sad
+joy
 anger
 surprise
 sad
@@ -4883,7 +4883,7 @@ sad
 fear
 fear
 surprise
-sad
+joy
 fear
 surprise
 anger
@@ -5014,7 +5014,7 @@ sad
 surprise
 fear
 surprise
-sad
+joy
 surprise
 joy
 surprise
@@ -5191,13 +5191,13 @@ joy
 sad
 joy
 anger
-sad
 joy
+joy
 surprise
 anger
 fear
 surprise
-sad
+joy
 sad
 anger
 anger
@@ -5235,7 +5235,7 @@ sad
 joy
 sad
 surprise
-sad
+joy
 joy
 sad
 anger
@@ -5285,7 +5285,7 @@ sad
 joy
 anger
 disgust
-sad
+joy
 fear
 surprise
 surprise
@@ -5310,7 +5310,7 @@ surprise
 fear
 surprise
 anger
-sad
+joy
 fear
 joy
 surprise
@@ -5425,7 +5425,7 @@ joy
 disgust
 anger
 fear
-sad
+joy
 fear
 joy
 sad
@@ -5484,7 +5484,7 @@ disgust
 joy
 fear
 joy
-sad
+joy
 anger
 sad
 joy
@@ -5495,7 +5495,7 @@ disgust
 disgust
 fear
 disgust
-sad
+joy
 sad
 fear
 surprise
@@ -5537,7 +5537,7 @@ surprise
 joy
 disgust
 joy
-sad
+joy
 fear
 anger
 sad
@@ -5560,7 +5560,7 @@ fear
 fear
 fear
 fear
-sad
+joy
 surprise
 joy
 joy
@@ -5823,9 +5823,9 @@ sad
 joy
 joy
 surprise
-sad
 sad
 sad
+joy
 fear
 joy
 joy
@@ -5954,8 +5954,8 @@ anger
 disgust
 sad
 joy
-sad
 sad
+joy
 surprise
 anger
 sad
@@ -6041,7 +6041,7 @@ disgust
 sad
 anger
 surprise
-sad
+joy
 disgust
 surprise
 joy
@@ -6062,11 +6062,11 @@ fear
 surprise
 surprise
 disgust
-sad
 joy
+joy
 anger
 sad
-sad
+joy
 joy
 sad
 sad
@@ -6112,7 +6112,7 @@ anger
 anger
 joy
 surprise
-sad
+joy
 fear
 joy
 anger
@@ -6127,7 +6127,7 @@ joy
 surprise
 joy
 anger
-sad
+joy
 disgust
 sad
 surprise
@@ -6163,13 +6163,13 @@ sad
 surprise
 joy
 disgust
-sad
+joy
 disgust
 sad
 anger
 anger
 surprise
-sad
+joy
 anger
 fear
 joy
@@ -6227,7 +6227,7 @@ surprise
 joy
 joy
 sad
-sad
+joy
 anger
 anger
 anger
@@ -6389,7 +6389,7 @@ sad
 fear
 fear
 fear
-sad
+joy
 sad
 surprise
 surprise
@@ -6431,7 +6431,7 @@ sad
 joy
 disgust
 disgust
-sad
+joy
 surprise
 sad
 surprise
@@ -6484,7 +6484,7 @@ anger
 surprise
 joy
 joy
-sad
+joy
 anger
 disgust
 sad
@@ -6575,7 +6575,7 @@ disgust
 disgust
 fear
 fear
-sad
+joy
 fear
 disgust
 anger
@@ -6686,7 +6686,7 @@ sad
 fear
 surprise
 joy
-sad
+joy
 surprise
 anger
 fear
@@ -6845,7 +6845,7 @@ fear
 disgust
 joy
 anger
-sad
+joy
 sad
 sad
 anger
@@ -6857,7 +6857,7 @@ sad
 disgust
 sad
 joy
-sad
+joy
 surprise
 sad
 fear
@@ -7212,7 +7212,7 @@ anger
 fear
 disgust
 fear
-sad
+joy
 surprise
 anger
 fear
@@ -7232,7 +7232,7 @@ joy
 surprise
 disgust
 fear
-sad
+joy
 sad
 disgust
 anger
@@ -7293,7 +7293,7 @@ fear
 disgust
 fear
 surprise
-sad
+joy
 sad
 joy
 disgust
@@ -7534,9 +7534,9 @@ fear
 surprise
 joy
 anger
-sad
 sad
 joy
+joy
 sad
 disgust
 disgust
@@ -7583,24 +7583,24 @@ fear
 sad
 anger
 surprise
-sad
+joy
 disgust
 disgust
 anger
 anger
 sad
 anger
-sad
+joy
 sad
 anger
 disgust
 sad
 anger
-sad
+joy
 fear
 fear
 joy
-sad
+joy
 surprise
 anger
 anger
@@ -7662,7 +7662,7 @@ anger
 surprise
 joy
 disgust
-sad
+joy
 surprise
 sad
 disgust
@@ -7674,7 +7674,7 @@ anger
 disgust
 anger
 surprise
-sad
+joy
 sad
 anger
 fear
@@ -7698,8 +7698,8 @@ surprise
 anger
 fear
 joy
-sad
 sad
+joy
 anger
 surprise
 anger
@@ -7749,7 +7749,7 @@ disgust
 anger
 joy
 joy
-sad
+joy
 sad
 disgust
 anger
@@ -7794,8 +7794,8 @@ fear
 joy
 disgust
 joy
-sad
 joy
+joy
 disgust
 fear
 joy
@@ -7829,7 +7829,7 @@ disgust
 disgust
 sad
 surprise
-sad
+joy
 surprise
 fear
 surprise
@@ -7944,7 +7944,7 @@ anger
 sad
 sad
 fear
-sad
+joy
 sad
 anger
 joy
@@ -8027,7 +8027,7 @@ fear
 surprise
 anger
 fear
-sad
+joy
 sad
 joy
 anger
@@ -8087,7 +8087,7 @@ fear
 anger
 joy
 anger
-sad
+joy
 surprise
 surprise
 joy
@@ -8109,7 +8109,7 @@ disgust
 joy
 anger
 surprise
-sad
+joy
 fear
 anger
 joy
@@ -8136,7 +8136,7 @@ surprise
 joy
 sad
 sad
-sad
+joy
 anger
 anger
 surprise
@@ -8151,7 +8151,7 @@ sad
 surprise
 sad
 fear
-sad
+joy
 anger
 fear
 anger
@@ -8186,7 +8186,7 @@ surprise
 anger
 sad
 joy
-sad
+joy
 joy
 sad
 disgust
@@ -8292,8 +8292,8 @@ fear
 anger
 sad
 disgust
-sad
 joy
+joy
 surprise
 disgust
 anger
@@ -8341,8 +8341,8 @@ disgust
 sad
 sad
 fear
-sad
 joy
+joy
 anger
 joy
 joy
@@ -8405,7 +8405,7 @@ fear
 disgust
 surprise
 fear
-sad
+joy
 sad
 sad
 sad
@@ -8427,8 +8427,8 @@ surprise
 joy
 surprise
 surprise
-sad
 joy
+joy
 anger
 anger
 anger
@@ -8444,7 +8444,7 @@ sad
 sad
 fear
 anger
-sad
+joy
 disgust
 sad
 disgust
@@ -8483,7 +8483,7 @@ anger
 fear
 surprise
 fear
-sad
+joy
 sad
 fear
 fear
@@ -8597,7 +8597,7 @@ anger
 joy
 anger
 disgust
-sad
+joy
 sad
 disgust
 anger
@@ -8608,7 +8608,7 @@ disgust
 sad
 fear
 disgust
-sad
+joy
 joy
 anger
 anger
@@ -8653,10 +8653,10 @@ disgust
 disgust
 disgust
 fear
-sad
+joy
 anger
 anger
-sad
+joy
 anger
 surprise
 sad
@@ -8699,7 +8699,7 @@ joy
 sad
 disgust
 disgust
-sad
+joy
 fear
 anger
 disgust
@@ -8795,7 +8795,7 @@ surprise
 anger
 anger
 surprise
-sad
+joy
 sad
 anger
 fear
@@ -8846,8 +8846,8 @@ fear
 disgust
 anger
 anger
-sad
 sad
+joy
 anger
 joy
 disgust
@@ -8978,14 +8978,14 @@ disgust
 anger
 anger
 fear
-sad
+joy
 sad
 joy
 disgust
 surprise
 surprise
 anger
-sad
+joy
 fear
 surprise
 joy
@@ -9010,7 +9010,7 @@ fear
 anger
 fear
 anger
-sad
+joy
 sad
 fear
 joy
@@ -9075,9 +9075,9 @@ joy
 anger
 fear
 disgust
-sad
 joy
 joy
+joy
 anger
 sad
 sad
@@ -9117,7 +9117,7 @@ fear
 disgust
 joy
 anger
-sad
+joy
 fear
 anger
 anger
@@ -9152,7 +9152,7 @@ sad
 anger
 surprise
 fear
-sad
+joy
 joy
 disgust
 surprise
@@ -9231,7 +9231,7 @@ joy
 fear
 surprise
 fear
-sad
+joy
 joy
 disgust
 joy
@@ -9271,7 +9271,7 @@ anger
 anger
 disgust
 sad
-sad
+joy
 disgust
 joy
 disgust
@@ -9328,7 +9328,7 @@ anger
 fear
 anger
 fear
-sad
+joy
 joy
 disgust
 disgust
@@ -9367,11 +9367,11 @@ joy
 joy
 surprise
 anger
-sad
 joy
+joy
 fear
-sad
 joy
+joy
 sad
 anger
 disgust
@@ -9385,8 +9385,8 @@ disgust
 joy
 joy
 fear
-sad
 joy
+joy
 disgust
 surprise
 sad
@@ -9408,7 +9408,7 @@ anger
 surprise
 surprise
 surprise
-sad
+joy
 surprise
 fear
 joy
@@ -9422,7 +9422,7 @@ fear
 joy
 joy
 anger
-sad
+joy
 anger
 disgust
 disgust
@@ -9500,7 +9500,7 @@ fear
 sad
 surprise
 sad
-sad
+joy
 fear
 joy
 sad
