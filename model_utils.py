@@ -60,12 +60,14 @@ def get_model(input_shape, embedding_layer, classes=6):
 
     embeddings = embedding_layer(sentence_indices)
     # embeddings = Embedding(embedding_layer + 1, 200, input_length=input_shape[0])(sentence_indices)
+    dropped_embeddings = Dropout(rate=0.3)(embeddings)
+
     # recurrent_regularizer=l1_l2(0.01,0.01)
     # activity_regularizer=l1_l2(0.01, 0.01)
     # kernel_regularizer=l1_l2(0.01, 0.01)
     # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Bidirectional(LSTM(units=128, bias_regularizer=l1_l2(0.01, 0.01), return_sequences=False))(embeddings)
+    x = Bidirectional(LSTM(units=128, bias_regularizer=l1_l2(0.01, 0.01), return_sequences=False))(dropped_embeddings)
     x = Dropout(rate=0.5)(x)
     # x = Bidirectional(LSTM(units=256))(x)
     # x = Dropout(rate=0.5)(x)
