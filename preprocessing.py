@@ -25,6 +25,8 @@ def escape_chars(text):
     text = text.replace("@USERNAME", "")
 
     text = re.sub(r"\s", " ", text)
+    text = re.sub(r"[‘´’]", "\'", text)
+    text = re.sub(r"[”“❝„\"]", "", text)
     text = text.replace("‼", " ‼ ")
     text = text.replace(".", " . ")
     text = text.replace(",", " , ")
@@ -32,8 +34,6 @@ def escape_chars(text):
     text = text.replace("?", " ? ")
     text = text.replace("…", " … ")
     text = text.replace("*", " * ")
-
-    text = re.sub(r"[‘´’]", "\'", text)
 
     text = re.sub(" '", " \' ", text)
     text = re.sub("' ", " \' ", text)
