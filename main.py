@@ -27,8 +27,8 @@ print('Creating embedding layer')
 
 word_embeddings = utils.load_embeddings(filepath=config.embeddings_path)
 embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=config.dim)
-print('Creating model')
 
+print('Creating model')
 model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes)
 # model = model_utils.get_model((max_string_length,), vocab_length, config.classes)
 
