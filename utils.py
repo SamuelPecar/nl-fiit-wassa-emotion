@@ -78,7 +78,7 @@ def indices_to_labels(y, index_to_word):
 
 def load_embeddings(filepath='data/glove.840B.300d.txt'):
     embeddings_index = {}
-    with open(os.path.join(filepath)) as f:
+    with open(os.path.join(filepath), encoding='UTF-8') as f:
         i = 0
         for line in f:
             values = line.split()
