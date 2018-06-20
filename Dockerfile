@@ -1,7 +1,6 @@
 ARG cuda_version=9.0
 ARG cudnn_version=7
 FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
-FROM node:4-onbuild
 
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -15,12 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       locales \
       wget && \
     rm -rf /var/lib/apt/lists/*
-
-# Set the locale
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
 
 # Install conda
 ENV CONDA_DIR /opt/conda
