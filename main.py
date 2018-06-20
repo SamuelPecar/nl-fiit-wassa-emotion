@@ -29,12 +29,13 @@ word_embeddings = utils.load_embeddings(filepath=config.embeddings_path)
 embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=config.dim)
 
 print('Creating model')
-model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes)
+model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes, units=config.units)
 # model = model_utils.get_model((max_string_length,), vocab_length, config.classes)
 
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
 callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor, early_stop_patience=config.early_stop_patience, early_stop_mode=config.early_stop_mode)
+
 model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.05, callbacks=callbacks, shuffle=True, verbose=config.verbose)
 # model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(test_x_indices, test_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose)
 utils.plot_model_history(model_info)

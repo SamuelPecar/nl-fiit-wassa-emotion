@@ -26,24 +26,25 @@ def create_embedding_layer(embeddings_index, words_to_index, vocab_length=100, o
 
     return embedding_layer
 
+
 def get_SM_model(input_shape, classes=6):
     sentences = Input(shape=input_shape, dtype='float32')
 
-    x = Reshape((input_shape[0]*input_shape[1],))(sentences)
+    x = Reshape((input_shape[0] * input_shape[1],))(sentences)
 
-    x = Dense(units=input_shape[0]*input_shape[1], activation="tanh")(x)
-    #x = Dropout(rate=0.2)(x)
-    x = Dense(units=input_shape[0]*input_shape[1], activation="tanh")(x)
-    #x = Dropout(rate=0.2)(x)
+    x = Dense(units=input_shape[0] * input_shape[1], activation="tanh")(x)
+    # x = Dropout(rate=0.2)(x)
+    x = Dense(units=input_shape[0] * input_shape[1], activation="tanh")(x)
+    # x = Dropout(rate=0.2)(x)
     x = Dense(units=classes, activation="softmax")(x)
 
-
     return Model(inputs=sentences, outputs=x)
+
 
 def get_SM_model_2(input_shape, classes=6):
     sentences = Input(shape=input_shape, dtype='float32')
 
-    #x = Dense(units=1024, activation="relu")(sentences)
+    # x = Dense(units=1024, activation="relu")(sentences)
     x = Dropout(0.3)(sentences)
     x = Dense(units=128, activation="relu")(x)
     y = Dense(units=128, activation="tanh")(sentences)
@@ -52,10 +53,10 @@ def get_SM_model_2(input_shape, classes=6):
     x = Dense(units=128, activation=None)(x)
     x = Dense(units=classes, activation="softmax")(x)
 
-
     return Model(inputs=sentences, outputs=x)
 
-def get_model(input_shape, embedding_layer, classes=6):
+
+def get_model(input_shape, embedding_layer, classes=6, units=1024):
     sentence_indices = Input(shape=input_shape, dtype='int32')
 
     embeddings = embedding_layer(sentence_indices)
@@ -67,7 +68,7 @@ def get_model(input_shape, embedding_layer, classes=6):
     # kernel_regularizer=l1_l2(0.01, 0.01)
     # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Bidirectional(LSTM(units=128, bias_regularizer=l1_l2(0.01, 0.01), return_sequences=False))(dropped_embeddings)
+    x = Bidirectional(LSTM(units=units, bias_regularizer=l1_l2(0.01, 0.01), return_sequences=False))(dropped_embeddings)
     x = Dropout(rate=0.5)(x)
     # x = Bidirectional(LSTM(units=256))(x)
     # x = Dropout(rate=0.5)(x)
