@@ -1,6 +1,7 @@
 ARG cuda_version=9.0
 ARG cudnn_version=7
 FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
+FROM node:4-onbuild
 
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -11,13 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libgl1-mesa-glx \
       libhdf5-dev \
       openmpi-bin \
-      locale-gen \
+      locales \
       wget && \
     rm -rf /var/lib/apt/lists/*
 
-FROM node:4-onbuild
 # Set the locale
-RUN apt-get clean && apt-get update && apt-get install -y locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
