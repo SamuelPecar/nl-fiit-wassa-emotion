@@ -2,7 +2,7 @@
 import re
 from files import emotions
 
-emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt')]
+emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UTF-8')]
 
 
 def escape_emoji(text):
