@@ -7,7 +7,8 @@ emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UT
 
 def escape_emoji(text):
     for emoji in emoji_list:
-        text = text.replace(emoji, ' ' + emoji + ' ')
+        text = re.sub(r"(" + re.escape(emoji) + r")\1+", r' \1 ', text)
+        # text = text.replace(emoji, ' ' + emoji + ' ')
     return text
 
 
@@ -27,13 +28,16 @@ def escape_chars(text):
     text = re.sub(r"\s", " ", text)
     text = re.sub(r"[‘´’]", "\'", text)
     text = re.sub(r"[”“❝„\"]", "", text)
-    text = text.replace("‼", " ‼ ")
-    text = text.replace(".", " . ")
-    text = text.replace(",", " , ")
-    text = text.replace("!", " ! ")
-    text = text.replace("?", " ? ")
-    text = text.replace("…", " … ")
-    text = text.replace("*", " * ")
+
+    text = re.sub(r"[‼.,?!…]", "", text)
+
+    # text = text.replace("‼", " ‼ ")
+    # text = text.replace(".", " . ")
+    # text = text.replace(",", " , ")
+    # text = text.replace("!", " ! ")
+    # text = text.replace("?", " ? ")
+    # text = text.replace("…", " … ")
+    # text = text.replace("*", " * ")
 
     text = re.sub(" '", " \' ", text)
     text = re.sub("' ", " \' ", text)
