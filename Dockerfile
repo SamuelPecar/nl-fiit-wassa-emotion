@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libgl1-mesa-glx \
       libhdf5-dev \
       openmpi-bin \
-      nvidia-docker
+      nvidia-docker \
       wget && \
     rm -rf /var/lib/apt/lists/*
 
