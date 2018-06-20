@@ -2,9 +2,6 @@ ARG cuda_version=9.0
 ARG cudnn_version=7
 FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
 
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
       bzip2 \
@@ -14,8 +11,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libgl1-mesa-glx \
       libhdf5-dev \
       openmpi-bin \
+      locale-gen \
       wget && \
     rm -rf /var/lib/apt/lists/*
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 # Install conda
 ENV CONDA_DIR /opt/conda
