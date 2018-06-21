@@ -68,7 +68,7 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
     # kernel_regularizer=l1_l2(0.01, 0.01)
     # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Bidirectional(LSTM(units=units, bias_regularizer=l1_l2(0.01, 0.01), return_sequences=False))(dropped_embeddings)
+    x = Bidirectional(LSTM(units=units, return_sequences=False))(dropped_embeddings)
     x = Dropout(rate=0.5)(x)
     # x = Bidirectional(LSTM(units=256))(x)
     # x = Dropout(rate=0.5)(x)

@@ -58,5 +58,5 @@ predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.inde
 microaverage, macroaverage = evaluation.calculate_prf(test_y.tolist(), predictions)
 
 token = "xoxp-18602746578-256894923987-385376204052-7892a6d3375c5c19af86d57f6c75b92e"
-
-slack.slack_message('Test message', 'iest', token)
+slack.slack_message(microaverage, 'iest', token)
+slack.slack_message(macroaverage, 'iest', token)
