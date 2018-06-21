@@ -4,6 +4,7 @@ import model_utils
 import preprocessing
 import evaluation
 import config
+import slack
 
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
@@ -31,7 +32,6 @@ embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_
 
 print('Creating model')
 model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes, units=config.units)
-# model = model_utils.get_model((max_string_length,), vocab_length, config.classes)
 
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
@@ -55,4 +55,8 @@ print('')
 probabilities = model.predict(test_x_indices)
 predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
 
-evaluation.calculate_prf(test_y.tolist(), predictions)
+microaverage, macroaverage = evaluation.calculate_prf(test_y.tolist(), predictions)
+
+token = "xoxp-18602746578-256894923987-385376204052-7892a6d3375c5c19af86d57f6c75b92e"
+
+slack.slack_message('Test message', 'iest', token)

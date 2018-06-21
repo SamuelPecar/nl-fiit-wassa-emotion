@@ -62,24 +62,15 @@ def calculate_prf(gold, prediction):
         microprecision = (sum(tp.values())) / (sum(tp.values()) + sum(fp.values()))
         microf = 0.0 if (microprecision + microrecall) == 0 else (2 * microprecision * microrecall) / (microprecision + microrecall)
     # Micro average
-    print("MicAvg" +
-          "\t" + str(int(sum(tp.values()))) +
-          "\t" + str(int(sum(fp.values()))) +
-          "\t" + str(int(sum(fn.values()))) +
-          "\t" + str(round(microprecision, 3)) +
-          "\t" + str(round(microrecall, 3)) +
-          "\t" + str(round(microf, 3))
-          )
+    microaverage = "MicAvg" + "\t" + str(int(sum(tp.values()))) + "\t" + str(int(sum(fp.values()))) + "\t" + str(int(sum(fn.values()))) + "\t" + str(round(microprecision, 3)) + "\t" + str(
+        round(microrecall, 3)) + "\t" + str(round(microf, 3))
+    print(microaverage)
     # Macro average
     macrorecall = sum(recall.values()) / len(recall)
     macroprecision = sum(precision.values()) / len(precision)
     macroF = sum(f.values()) / len(f)
-    print("MacAvg" +
-          "\t" + str() +
-          "\t" + str() +
-          "\t" + str() +
-          "\t" + str(round(macroprecision, 3)) +
-          "\t" + str(round(macrorecall, 3)) +
-          "\t" + str(round(macroF, 3))
-          )
+    macroaverage = "MacAvg" + "\t" + str() + "\t" + str() + "\t" + str() + "\t" + str(round(macroprecision, 3)) + "\t" + str(round(macrorecall, 3)) + "\t" + str(round(macroF, 3))
+    print(macroaverage)
     print("Official result:", macroF)
+
+    return microaverage, macroaverage

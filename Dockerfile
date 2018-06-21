@@ -56,6 +56,7 @@ RUN conda install -y python=${python_version} && \
       pyyaml \
       scikit-learn \
       six \
+      slack \
       theano && \
     git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
     pip install git+git://github.com/keras-team/keras.git && \
