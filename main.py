@@ -12,7 +12,8 @@ if sys.version_info[0] < 3:
 print('Preparing data')
 
 # train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', partition=config.partition)
-train_x, train_y, test_x, test_y = utils.load_dataset('data/train_processed.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
+# train_x, train_y, test_x, test_y = utils.load_dataset('data/train_processed.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
+train_x, train_y, test_x, test_y = utils.load_dataset('data/train_extended.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
 
 print('Preprocessing data')
 train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=config.emoji2word)
@@ -39,7 +40,7 @@ callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monit
 
 model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.05, callbacks=callbacks, shuffle=True, verbose=config.verbose)
 # model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(test_x_indices, test_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose)
-utils.plot_model_history(model_info)
+# utils.plot_model_history(model_info)
 
 print('predict values model')
 
