@@ -1,7 +1,7 @@
 epochs = 20
 batch_size = 64
 dim = 200
-units = 128
+units = 256
 embeddings_path = 'data/emb.200d.txt'
 
 emoji2word = False

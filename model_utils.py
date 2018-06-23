@@ -3,6 +3,7 @@ from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Res
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l1_l2
+from keras.layers.noise import GaussianNoise
 import numpy as np
 
 
@@ -61,16 +62,17 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
 
     embeddings = embedding_layer(sentence_indices)
     # embeddings = Embedding(embedding_layer + 1, 200, input_length=input_shape[0])(sentence_indices)
-    dropped_embeddings = Dropout(rate=0.3)(embeddings)
+    # dropped_embeddings = Dropout(rate=0.3)(embeddings)
+    noised_embeddings = GaussianNoise(rate=0.3)(embeddings)
 
     # recurrent_regularizer=l1_l2(0.01,0.01)
     # activity_regularizer=l1_l2(0.01, 0.01)
     # kernel_regularizer=l1_l2(0.01, 0.01)
     # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Bidirectional(LSTM(units=units, return_sequences=False))(dropped_embeddings)
+    x = Bidirectional(LSTM(units=units, return_sequences=False))(noised_embeddings)
     x = Dropout(rate=0.5)(x)
-    # x = Bidirectional(LSTM(units=256))(x)
+    # x = Bidirectional(LSTM(units=units))(x)
     # x = Dropout(rate=0.5)(x)
     x = Dense(units=classes, activation="softmax")(x)
 
