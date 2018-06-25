@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate
+from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate, Conv1D, MaxPooling1D
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l1_l2
@@ -9,7 +9,7 @@ import numpy as np
 
 # val_f1_c
 def get_callbacks(early_stop_monitor='val_acc', early_stop_patience=2, early_stop_mode='auto'):
-    earlystop = EarlyStopping(monitor=early_stop_monitor, min_delta=0.001, patience=early_stop_patience, verbose=1, mode=early_stop_mode)
+    earlystop = EarlyStopping(monitor=early_stop_monitor, min_delta=0.003, patience=early_stop_patience, verbose=1, mode=early_stop_mode)
 
     return [earlystop]
 
@@ -61,7 +61,6 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
     sentence_indices = Input(shape=input_shape, dtype='int32')
 
     embeddings = embedding_layer(sentence_indices)
-    # embeddings = Embedding(embedding_layer + 1, 200, input_length=input_shape[0])(sentence_indices)
     noised_embeddings = GaussianNoise(0.2)(embeddings)
     dropped_embeddings = Dropout(rate=0.2)(noised_embeddings)
 
@@ -70,7 +69,10 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
     # kernel_regularizer=l1_l2(0.01, 0.01)
     # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Bidirectional(LSTM(units=units, return_sequences=False))(dropped_embeddings)
+    x = Conv1D(64, 5, padding='valid', activation='relu', strides=1)(dropped_embeddings)
+    x = MaxPooling1D(pool_size=4)(x)
+
+    x = Bidirectional(LSTM(units=units, return_sequences=False))(x)
     x = Dropout(rate=0.3)(x)
     # x = Bidirectional(LSTM(units=units))(x)
     # x = Dropout(rate=0.5)(x)

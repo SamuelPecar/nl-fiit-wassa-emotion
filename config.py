@@ -23,7 +23,7 @@ verbose = 1
 # verbose = 2
 
 # Early stopping
-early_stop_monitor = 'val_f1'
+early_stop_monitor = 'val_acc'
 early_stop_patience = 2
 early_stop_mode = 'max'
 
