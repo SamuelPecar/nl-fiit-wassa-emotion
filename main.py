@@ -14,16 +14,20 @@ print('Preparing data')
 # train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', partition=config.partition)
 train_x, train_y, test_x, test_y = utils.load_dataset('data/train_processed.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
 # train_x, train_y, test_x, test_y = utils.load_dataset('data/train_extended.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
+pre_train_x, _ = utils.load_dataset('data/train_extended_only.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
+
 
 print('Preprocessing data')
 train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=config.emoji2word)
 
-vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, test_x)
+# vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, test_x)
+vocab_length, words_to_index, index_to_words = utils.create_vocabulary(pre_train_x, test_x)
 
 train_y_oh = utils.labels_to_indices(train_y, config.labels_to_index, config.classes)
 test_y_oh = utils.labels_to_indices(test_y, config.labels_to_index, config.classes)
 
 train_x_indices = utils.sentences_to_indices(train_x, words_to_index, max_len=max_string_length)
+pre_train_x_indices = utils.sentences_to_indices(pre_train_x, words_to_index, max_len=max_string_length)
 test_x_indices = utils.sentences_to_indices(test_x, words_to_index, max_len=max_string_length)
 
 print('Creating embedding layer')
@@ -35,22 +39,23 @@ print('Creating model')
 model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes, units=config.units)
 
 model.summary()
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor, early_stop_patience=config.early_stop_patience, early_stop_mode=config.early_stop_mode)
 
+model_info = model.fit(pre_train_x_indices, train_y_oh, epochs=3, batch_size=config.batch_size, shuffle=True, verbose=config.verbose)
 model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.05, callbacks=callbacks, shuffle=True, verbose=config.verbose)
 # model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(test_x_indices, test_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose)
 # utils.plot_model_history(model_info)
 
 print('predict values model')
 
-loss, acc, f1, precision, recall = model.evaluate(test_x_indices, test_y_oh, verbose=config.verbose)
+loss, acc = model.evaluate(test_x_indices, test_y_oh, verbose=config.verbose)
 print('Model evaluation')
 print("Loss = ", loss)
 print("Test accuracy = ", acc)
-print("F1 = ", f1)
-print("Precision = ", precision)
-print("Recall = ", recall)
+# print("F1 = ", f1)
+# print("Precision = ", precision)
+# print("Recall = ", recall)
 print('')
 
 probabilities = model.predict(test_x_indices)

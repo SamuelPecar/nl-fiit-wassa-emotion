@@ -1,5 +1,5 @@
 epochs = 20
-batch_size = 64
+batch_size = 32
 dim = 200
 units = 256
 embeddings_path = 'data/emb.200d.txt'
