@@ -14,7 +14,7 @@ print('Preparing data')
 # train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', partition=config.partition)
 train_x, train_y, test_x, test_y = utils.load_dataset('data/train_processed.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
 # train_x, train_y, test_x, test_y = utils.load_dataset('data/train_extended.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
-pre_train_x, _ = utils.load_dataset('data/train_extended_only.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
+pre_train_x, _, _, _ = utils.load_dataset('data/train_extended_only.csv', 'data/trial_processed.csv', 'data/trial.labels', partition=config.partition)
 
 
 print('Preprocessing data')
