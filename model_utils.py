@@ -69,10 +69,7 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
     # kernel_regularizer=l1_l2(0.01, 0.01)
     # bias_regularizer=l1_l2(0.01, 0.01)
 
-    x = Conv1D(64, 5, padding='valid', activation='relu', strides=1)(dropped_embeddings)
-    x = MaxPooling1D(pool_size=4)(x)
-
-    x = Bidirectional(LSTM(units=units, return_sequences=False))(x)
+    x = Bidirectional(LSTM(units=units, return_sequences=False))(dropped_embeddings)
     x = Dropout(rate=0.3)(x)
     # x = Bidirectional(LSTM(units=units))(x)
     # x = Dropout(rate=0.5)(x)
