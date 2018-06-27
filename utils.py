@@ -105,6 +105,21 @@ def plot_model_history(model_history):
     plt.show()
 
 
+def create_output_csv(y, predictions, probabilities, x):
+    data = pd.DataFrame()
+
+    data.insert(0, 'text', x)
+    data.insert(0, 'sad', probabilities[:, 0])
+    data.insert(0, 'joy', probabilities[:, 1])
+    data.insert(0, 'disgust', probabilities[:, 2])
+    data.insert(0, 'surprise', probabilities[:, 3])
+    data.insert(0, 'anger', probabilities[:, 4])
+    data.insert(0, 'fear', probabilities[:, 5])
+    data.insert(0, 'predictions', predictions)
+    data.insert(0, 'class', y)
+    data.to_csv('data/output.csv', sep=';')
+
+
 class DummyFile(object):
     def write(self, x): pass
 

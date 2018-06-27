@@ -45,7 +45,7 @@ model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_
 
 print('predict values model')
 
-loss, acc = model.evaluate(test_x_indices, test_y_oh, verbose=config.verbose)
+loss, acc = model.evaluate(test_x_indices, test_y_oh, verbose=2)
 print('Model evaluation')
 print("Loss = ", loss)
 print("Test accuracy = ", acc)
@@ -58,6 +58,8 @@ probabilities = model.predict(test_x_indices)
 predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
 
 microaverage, macroaverage = evaluation.calculate_prf(test_y.tolist(), predictions)
+
+utils.create_output_csv(test_y, predictions, probabilities, test_x)
 
 token = "xoxp-18602746578-256894923987-385376204052-7892a6d3375c5c19af86d57f6c75b92e"
 slack.slack_message(microaverage, 'iest', token)
