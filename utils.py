@@ -7,7 +7,7 @@ from keras.preprocessing.text import Tokenizer
 import contextlib
 import sys
 
-tokenizer = Tokenizer()
+tokenizer = Tokenizer(filters='')
 
 
 def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
