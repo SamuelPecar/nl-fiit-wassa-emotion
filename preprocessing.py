@@ -3,6 +3,7 @@ import re
 from files import emotions
 
 emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UTF-8')]
+dictionary = [line.rstrip('\n') for line in open('files/dict.txt', encoding='UTF-8')]
 
 
 def escape_emoji(text):
@@ -19,6 +20,42 @@ def replace_emoji(text):
     return utf_sent
 
 
+def emoticon_to_emoji(text):
+    text = re.sub(r":\)", " 🙂 ", text)
+    text = re.sub(r":-\)", " 🙂 ", text)
+    text = re.sub(r":D", " 😀 ", text)
+    text = re.sub(r":-D", " 😀 ", text)
+    text = re.sub(r":\(", " 🙁 ", text)
+    text = re.sub(r":-\(", " 🙁 ", text)
+
+    return text
+
+
+def process_hashtags(text):
+    hashtags = re.findall(r" (#\w+)", text)
+
+    # if len(hashtags):
+    #     print(text)
+    #     print(hashtags)
+    #     print('------------------------------------------------------------------------')
+
+    for hashtag in hashtags:
+        expanded = " ".join([a for a in re.split('([A-Z][a-z]+)', hashtag) if a])
+        text = text.replace(hashtag, expanded)
+
+        if hashtag == expanded:
+            processed_hashtag = hashtag[1:]
+            if processed_hashtag in dictionary:
+                text = text.replace(hashtag, processed_hashtag)
+
+    # if len(hashtags):
+    #     print(text)
+    #     print(hashtags)
+    #     print('------------------------------------------------------------------------')
+
+    return text
+
+
 def escape_chars(text):
     text = text.replace("[NEWLINE]", ". ")
     text = text.replace("http://url.removed", "")
@@ -26,9 +63,12 @@ def escape_chars(text):
 
     text = re.sub(r"\s", " ", text)
     text = re.sub(r"[‘´’]", "\'", text)
-    text = re.sub(r"[”“❝„\"]", "", text)
+    text = re.sub(r"[”“❝„\"]", " ", text)
+    text = re.sub("/", " / ", text)
 
-    text = re.sub(r"[‼.,?!…]", "", text)
+    text = re.sub(r"[‼.,?!…*]", " ", text)
+    text = re.sub(r"[\(\)~+=<>{}:;\-—|_\^]", " ", text)
+    text = re.sub(r"[0-9]", " ", text)
 
     # text = text.replace("‼", " ‼ ")
     # text = text.replace(".", " . ")
@@ -51,6 +91,9 @@ def escape_chars(text):
     text = re.sub(r"'ve", " have", text)
     text = re.sub(r"can't", " cannot ", text)
     text = re.sub(r"n't", " not ", text)
+    text = re.sub(r"\$", " dollar ", text)
+    text = re.sub(r"£", " pound ", text)
+    text = re.sub(r"€", " euro ", text)
 
     return text
 
@@ -58,9 +101,16 @@ def escape_chars(text):
 def escape_text(x, emoji2word=False):
     max_len = 0
     for i in range(len(x)):
+
         x[i] = escape_emoji(x[i])
+
+        x[i] = emoticon_to_emoji(x[i])
+
+        x[i] = process_hashtags(x[i])
+
         if emoji2word:
             x[i] = replace_emoji(x[i])
+
         x[i] = escape_chars(x[i])
 
         if len(x[i].split()) > max_len:
