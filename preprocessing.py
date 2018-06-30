@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from files import emotions
+from files import emoji
 
 emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UTF-8')]
 dictionary = [line.rstrip('\n') for line in open('files/dict.txt', encoding='UTF-8')]
@@ -27,7 +28,15 @@ def emoticon_to_emoji(text):
     text = re.sub(r":-D", " 😀 ", text)
     text = re.sub(r":\(", " 🙁 ", text)
     text = re.sub(r":-\(", " 🙁 ", text)
+    text = re.sub(r";\)", " 😉 ", text)
+    text = re.sub(r";-\)", " 😉 ", text)
 
+    return text
+
+
+def process_emoji(text):
+    for e in emoji.emoji_dict:
+        text = text.replace(e, emoji.emoji_dict[e])
     return text
 
 
@@ -107,6 +116,8 @@ def escape_text(x, emoji2word=False):
         x[i] = emoticon_to_emoji(x[i])
 
         x[i] = process_hashtags(x[i])
+
+        x[i] = process_emoji(x[i])
 
         if emoji2word:
             x[i] = replace_emoji(x[i])
