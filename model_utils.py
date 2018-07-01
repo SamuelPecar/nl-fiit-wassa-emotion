@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate
+from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate, GaussianNoise
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l1_l2
@@ -41,19 +41,27 @@ def get_SM_model(input_shape, classes=6):
     return Model(inputs=sentences, outputs=x)
 
 def get_SM_model_2(input_shape, classes=6):
-    sentences = Input(shape=input_shape, dtype='float32')
+    sentence = Input(shape=input_shape, dtype='float32')
 
-    #x = Dense(units=1024, activation="relu")(sentences)
-    x = Dropout(0.3)(sentences)
-    x = Dense(units=128, activation="relu")(x)
-    y = Dense(units=128, activation="tanh")(sentences)
-    x = Concatenate(axis=-1)([x, y])
-    x = Dropout(rate=0.5)(x)
-    x = Dense(units=128, activation=None)(x)
+    # x = GaussianNoise(0.15)(sentence)
+    # x_d = Dropout(0.3)(x)
+    # x = Dense(units=512, activation="relu")(x_d)
+    # y = Dense(units=512, activation="tanh")(x_d)
+    # x = Concatenate(axis=-1)([x, y])
+    # x = Dropout(rate=0.1)(x)
+    # #x = Dense(units=512, activation="relu")(x)
+    # x = Dense(units=classes, activation="softmax")(x)
+
+    #x = Dense(units=2048, activation="relu")(sentence)
+    #x = Dense(units=classes, activation="softmax")(x)
+
+    x = GaussianNoise(0.05)(sentence)
+    x = Dropout(0.1)(x)
+
+    x = Dense(units=512, activation="relu")(x)
     x = Dense(units=classes, activation="softmax")(x)
 
-
-    return Model(inputs=sentences, outputs=x)
+    return Model(inputs=sentence, outputs=x)
 
 def get_model(input_shape, embedding_layer, classes=6):
     sentence_indices = Input(shape=input_shape, dtype='int32')

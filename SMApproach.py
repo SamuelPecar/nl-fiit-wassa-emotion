@@ -11,7 +11,7 @@ import tensorflow_hub as hub
 import model_utils
 import evaluation
 import config
-
+import torch
 
 class AbstractEncoder():
     def __init__(self, args):
@@ -58,10 +58,14 @@ class UniversalSentenceEncoder(AbstractEncoder):
     @staticmethod
     def getName():
         return "USE"
+    @staticmethod
+    def getSize():
+        return 512
 
 class Infersent(AbstractEncoder):
     def __init__(self, all_sentences):
-        self.infersent = torch.load('SentenceModels/infersent.allnli.pickle', map_location=lambda storage, loc: storage)
+        #self.infersent = torch.load('SentenceModels/infersent.allnli.pickle', map_location=lambda storage, loc: storage)
+        self.infersent = torch.load('SentenceModels/infersent.allnli.pickle')
         self.infersent.set_glove_path('data/glove.840B.300d.txt')
 
         with utils.nostdout():
@@ -69,64 +73,93 @@ class Infersent(AbstractEncoder):
     def use(self, sentences_to_embed):
         definitions_emb = list()
         for definition in sentences_to_embed:
-            definitions_emb.append(self.infersent.encode([definition])[0])
+            definitions_emb.append(self.infersent.encode([definition], tokenize=True)[0])
 
         return definitions_emb
     @staticmethod
     def getName():
         return "InferSent"
+    @staticmethod
+    def getSize():
+        return 4096
 
-def prepare_data_file(encoder, dataset_size=10000, batch_size=6):
+
+
+def prepare_data_file(encoder, dataset_size=10000, batch_size=128, mode='original'):  #original, reconstructed, both
+    print("...loading&preprocessing dataset")
     train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=dataset_size)
-    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=True)
-
+    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
+    print("...preparing candidate sentences:")
     train_x_list = list()
     train_y_list = list()
 
     for index, sentence in enumerate(train_x):
+        print('\r......{0}/{1}'.format(index, train_x.shape[0]), end="")
         train_y_list.append(train_y[index])
-        train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'angry'))
-        train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'sad'))
-        train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'joy'))
-        train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'disgust'))
-        train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'fear'))
-        train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'surprise'))
+        if mode == 'original' or mode == 'both':
+            train_x_list.append(sentence)
+        if mode == 'reconstructed' or mode == 'both':
+            train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'angry'))
+            train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'sad'))
+            train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'joy'))
+            train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'disgust'))
+            train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'fear'))
+            train_x_list.append(sentence.replace("[#TRIGGERWORD#]", 'surprise'))
+    print("\n...initializing encoder instance")
     encoder_instance = encoder(train_x_list)
-
-    with open("data/enRep_{}_{}.csv".format(encoder.getName(), dataset_size), 'w', newline='') as csvfile:
+    numpy.set_printoptions(threshold=5000)
+    print("...writing csv:")
+    if mode == 'both':
+        n_of_elements_in_row = 7
+    elif mode == 'original':
+        n_of_elements_in_row = 1
+    elif mode == 'reconstructed':
+        n_of_elements_in_row = 6
+    else:
+        raise ValueError
+    with open("data/enRep_{}_{}_{}.csv".format(encoder.getName(), dataset_size, mode), 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=';', quoting=csv.QUOTE_MINIMAL)
-        i=0
+        i = 0
+        j = 0
         while(True):
             print('\r.........{0}/{1}'.format(i*batch_size, len(train_x_list)), end="")
             embeddings = encoder_instance.use(train_x_list[i*batch_size:(i+1)*batch_size])
-            for x in range(0, batch_size, 6):
-                new_row = train_y_list[i]
-                for j in range(0, 6):
-                    new_row += "," + numpy.array_str(embeddings[x+j]).replace('\n', '')
-                csv_writer.writerow([new_row])
+            for x in range(0, len(embeddings)):
+                if x % n_of_elements_in_row == 0:
+                    new_row = train_y_list[j]
+                    j += 1
+                new_row += "," + numpy.array_str(embeddings[x]).replace('\n', '')
+                if x % n_of_elements_in_row == n_of_elements_in_row-1:
+                    csv_writer.writerow([new_row])
             if (i+1)*batch_size >= len(train_x_list):
                 i += 1
-                print('\r.........{0}/{1}'.format(i * batch_size, len(train_x_list)), end="")
+                print('\r.........{0}/{1}'.format(len(train_x_list), len(train_x_list)), end="")
                 break
             else:
                 i += 1
 
-def load_data(filename, partition=None):
+def load_data(filename, partition=None, candidates=True):
     #train = pd.read_csv(filename, sep=',', header=None).values
-    train = pd.read_csv(filename, sep=',', header=None).sample(frac=1).values
+    train = pd.read_csv(filename, sep=',', header=None, nrows=partition).sample(frac=1).values
     if not partition:
         partition = train.shape[0]
-    train_x = numpy.zeros((partition, train.shape[1]-1, numpy.fromstring(train[0][1][1:-1], dtype=numpy.float32, sep=' ').shape[0]))
+    if candidates:
+        train_x = numpy.zeros((partition, train.shape[1] - 2, numpy.fromstring(train[0][1][1:-1], dtype=numpy.float32, sep=' ').shape[0]), dtype=numpy.float32)
+    else:
+        train_x = numpy.zeros((partition, numpy.fromstring(train[0][1][1:-1].replace('\n', ''), dtype=numpy.float32, sep=' ').shape[0]), dtype=numpy.float32)
     train_y = numpy.zeros((partition, 6))
     print(train_x.shape)
     for i in range(0, partition):
-        train_x[i, 0] = numpy.fromstring(train[i, 1][1:-1], dtype=numpy.float32, sep=' ')
-        train_x[i, 1] = numpy.fromstring(train[i, 2][1:-1], dtype=numpy.float32, sep=' ')
-        train_x[i, 2] = numpy.fromstring(train[i, 3][1:-1], dtype=numpy.float32, sep=' ')
+        if candidates:
+            train_x[i, 0] = numpy.fromstring(train[i, 2][1:-1], dtype=numpy.float32, sep=' ')
+            train_x[i, 1] = numpy.fromstring(train[i, 3][1:-1], dtype=numpy.float32, sep=' ')
+            train_x[i, 2] = numpy.fromstring(train[i, 4][1:-1], dtype=numpy.float32, sep=' ')
 
-        train_x[i, 3] = numpy.fromstring(train[i, 4][1:-1], dtype=numpy.float32, sep=' ')
-        train_x[i, 4] = numpy.fromstring(train[i, 5][1:-1], dtype=numpy.float32, sep=' ')
-        train_x[i, 5] = numpy.fromstring(train[i, 6][1:-1], dtype=numpy.float32, sep=' ')
+            train_x[i, 3] = numpy.fromstring(train[i, 5][1:-1], dtype=numpy.float32, sep=' ')
+            train_x[i, 4] = numpy.fromstring(train[i, 6][1:-1], dtype=numpy.float32, sep=' ')
+            train_x[i, 5] = numpy.fromstring(train[i, 7][1:-1], dtype=numpy.float32, sep=' ')
+        else:
+            train_x[i] = numpy.fromstring(train[i, 1][1:-1], dtype=numpy.float32, sep=' ')
 
         if train[i,0] == 'anger':
             train_y[i] = numpy.asarray([1, 0, 0, 0, 0, 0])
@@ -141,19 +174,24 @@ def load_data(filename, partition=None):
         elif train[i, 0] == 'surprise':
             train_y[i] = numpy.asarray([0, 0, 0, 0, 0, 1])
 
-
+    print(train_x[0])
     return train_x, train_y
-def experiment1(encoder):
+def experiment_1(encoder):
+    print("...loading&preprocessing dataset")
     #train_x, train_y = load_data("data/enRep_USE_None.csv", 40000)
     train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels',
-                                                          partition=None)
+                                                          partition=1000)
     train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
-    encoder_instance = UniversalSentenceEncoder()
-    embeddings = numpy.zeros((train_x.shape[0], 512))
+    print("...creating encoder instance")
+    encoder_instance = encoder(train_x)
+    print("...encoding sentences")
+    embeddings = numpy.zeros((train_x.shape[0], encoder_instance.getSize()))
     for i in range(0, train_x.shape[0], 1000):
+        print('\r......{0}/{1}'.format(i, train_x.shape[0]), end="")
         embeddings[i:i+1000] = encoder_instance.use(train_x[i:i+1000])
-    #embeddings = encoder_instance.use(train_x)
-
+    for i in embeddings[0:10]:
+        print(i)
+    print("...preparing labels")
     train_y_l = numpy.zeros((train_y.shape[0], 6))
     for i in range(train_y.shape[0]):
         if train_y[i] == 'anger':
@@ -169,9 +207,9 @@ def experiment1(encoder):
         elif train_y[i] == 'surprise':
             train_y_l[i] = numpy.asarray([0, 0, 0, 0, 0, 1])
     model = model_utils.get_SM_model_2(embeddings[0].shape, 6)
-
-    print(embeddings.shape)
-    print(embeddings[0].shape)
+    print("...Preparations complete:")
+    print("......Embeddings shape (data size, embedding size): {}".format(embeddings.shape))
+    print("......Labels shape (data size, classes): {}".format(train_y.shape))
     model.summary()
     model.compile(loss='categorical_crossentropy', optimizer='adam',
                   metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
@@ -181,11 +219,144 @@ def experiment1(encoder):
     model_info = model.fit(embeddings, train_y_l, epochs=200, batch_size=config.batch_size,
                            validation_split=0.1, shuffle=True, verbose=2)
 
+class MyGenerator(keras.utils.Sequence):
+    def __init__(self, filepath, batch, embedding_size, validation_split=0.1, batch_change=None):
+        self.file = open(filepath, 'r', newline='')
+        self.line_count = 0
+        with open(filepath) as f:
+            for l in f:
+                self.line_count += 1
+        self.line_count = numpy.floor(self.line_count*(1-validation_split))
+        self.batch_change = batch_change
+        self.filepath = filepath
+        self.batch_size = batch
+        self.embedding_size = embedding_size
+        self.n_epochs = 0
+        print("...Train generator initialized:")
+        print("......lines: {}".format(self.line_count))
+        print("......batch size: {}".format(self.batch_size))
+        print("......embedding size: {}".format(self.embedding_size))
+        print("......number of batches: {}".format(self.__len__()))
+    def on_epoch_end(self):
+        self.n_epochs += 1
+        if self.batch_change is not None:
+            if self.n_epochs in self.batch_change:
+                self.batch_size *= 2
+        self.file.close()
+        self.file = open(self.filepath, 'r', newline='')
+    def __len__(self):
+        return int(numpy.floor(self.line_count / self.batch_size))
+    def __getitem__(self, index):
+        result_x = numpy.zeros((self.batch_size, self.embedding_size))
+        result_y = numpy.zeros((self.batch_size, 6))
+        for i in range(0, self.batch_size):
+            line = self.file.readline()
+            result_x[i] = numpy.fromstring(line.split(',')[1][1:-1], dtype=numpy.float32, sep=' ')
+            label = line.split(',')[0]
+            result_y[i] = utils.labels_to_indices(numpy.asarray([label]), config.labels_to_index, 6)
+        return result_x, result_y
+
+class MyValidationGenerator(keras.utils.Sequence):
+    def __init__(self, filepath, batch, embedding_size, validation_split=0.1):
+        self.file = open(filepath, 'r', newline='')
+        self.total_line_count = 0
+        with open(filepath) as f:
+            for l in f:
+                self.total_line_count += 1
+        self.validation_split = validation_split
+        self.train_line_count = int(numpy.floor(self.total_line_count*(1-self.validation_split)))
+        self.val_line_count = int(numpy.ceil(self.total_line_count*self.validation_split))
+        for i in range(0, self.train_line_count):
+            line = self.file.readline()
+        self.filepath = filepath
+        self.batch_size = batch
+        self.embedding_size = embedding_size
+        print("...Validation generator initialized:")
+        print("......lines: {}".format(self.val_line_count))
+        print("......batch size: {}".format(self.batch_size))
+        print("......embedding size: {}".format(self.embedding_size))
+        print("......number of batches: {}".format(self.__len__()))
+    def __len__(self):
+        return int(numpy.floor(self.val_line_count / self.batch_size))
+    def __getitem__(self, index):
+        result_x = numpy.zeros((self.batch_size, self.embedding_size))
+        result_y = numpy.zeros((self.batch_size, 6))
+        for i in range(0, self.batch_size):
+            line = self.file.readline()
+            if line == '':
+                self.file.close()
+                self.file = open(self.filepath, 'r', newline='')
+                for ll in range(0, self.train_line_count):
+                    line = self.file.readline()
+                line = self.file.readline()
+            result_x[i] = numpy.fromstring(line.split(',')[1][1:-1], dtype=numpy.float32, sep=' ')
+            label = line.split(',')[0]
+            result_y[i] = utils.labels_to_indices(numpy.asarray([label]), config.labels_to_index, 6)[0]
+        return result_x, result_y
+
+def prepare_testdata():
+    print("...Preparing test set")
+
+    test = pd.read_csv('data/trial.csv', sep='\t', header=None).values
+    test_label = pd.read_csv('data/test.labels', sep="\t", header=None).values
+
+    test_x = numpy.asarray(test[:, 1])
+    test_label = numpy.asarray(test_label[:, 0])
+
+    test_x = preprocessing.preprocessing_pipeline([], test_x)[1]
+    test_y = utils.labels_to_indices(test_label, config.labels_to_index, 6)
+
+    encoder = Infersent(test_x)
+    test_x_s = numpy.zeros((test_x.shape[0], encoder.getSize()))
+
+    i=0
+    while(True):
+        print('\r......{0}/{1}'.format(i, test_x.shape[0]), end="")
+        if i >= test_x.shape[0]:
+            break
+        test_x_s[i:i+64] = encoder.use(test_x[i:i+64])
+        i += 64
+    # for index, sentence in enumerate(test_x):
+    #     print('\r......{0}/{1}'.format(index, test_x.shape[0]), end="")
+    #
+    #     test_x_s[index] = encoder.use([sentence])[0]
+
+    return test_x_s, test_y, test_label
+def experiment_2(): # w/o candidates
+    test_x_s, test_y, test_label = prepare_testdata()
+    print("...initializing model")
+    model = model_utils.get_SM_model_2((4096,), 6)
+    model.summary()
+    model.compile(loss='categorical_crossentropy', optimizer='adam',
+                  metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
+    callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor,
+                                          early_stop_patience=config.early_stop_patience,
+                                          early_stop_mode=config.early_stop_mode)
+
+    model_info = model.fit_generator(MyGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= MyValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=200, verbose=2)
+
+    print('...Evaluation')
+    loss, acc, f1, precision, recall = model.evaluate(test_x_s, test_y, verbose=2)
+    print("...Loss = ", loss)
+    print("...Test accuracy = ", acc)
+    print("...F1 = ", f1)
+    print("...Precision = ", precision)
+    print("...Recall = ", recall)
+
+    probabilities = model.predict(test_x_s)
+    predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
+
+    evaluation.calculate_prf(test_label.tolist(), predictions)
+
+
 if __name__ == '__main__':
-    experiment1(Infersent)
-    #prepare_data_file(Infersent)
-    #prepare_data_file(UniversalSentenceEncoder, 5)
-    #load_data("data/enRep_USE_5.csv", None)
+    #experiment_1(Infersent)
+    experiment_2()
+    #prepare_data_file(Infersent, None, mode='original')
+    #prepare_data_file(UniversalSentenceEncoder, None)
+    #load_data("data/enRep_InferSent_1000.csv", 200, candidates=False)
+    #prepare_testdata()
+
 
 
 
