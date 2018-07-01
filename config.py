@@ -1,6 +1,7 @@
 epochs = 20
 batch_size = 64
 dim = 200
+units = 1024
 embeddings_path = 'data/emb.200d.txt'
 
 emoji2word = False
@@ -22,8 +23,8 @@ verbose = 1
 # verbose = 2
 
 # Early stopping
-early_stop_monitor = 'val_f1'
-early_stop_patience = 2
+early_stop_monitor = 'val_acc'
+early_stop_patience = 1
 early_stop_mode = 'max'
 
 # list for convesion of classes

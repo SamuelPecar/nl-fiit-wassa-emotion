@@ -7,13 +7,13 @@ from keras.preprocessing.text import Tokenizer
 import contextlib
 import sys
 
-tokenizer = Tokenizer()
+tokenizer = Tokenizer(filters='')
 
 
 def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
-    # train = pd.read_csv(train_file, sep=sep, header=header).sample(frac=1).values
-    train = pd.read_csv(train_file, sep=sep, header=header).values
-    test = pd.read_csv(test_file, sep=sep, header=header).values
+    train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).sample(frac=1).values
+    # train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).values
+    test = pd.read_csv(test_file, sep=sep, header=header, quoting=3).values
     test_label = pd.read_csv(test_labels, sep=sep, header=header).values
 
     if partition:
@@ -52,6 +52,8 @@ def sentences_to_indices(x, word_to_index, max_len):
             else:
                 x_indices[i, j] = 0
             j = j + 1
+            if j >= max_len:
+                break
 
     return x_indices
 
@@ -76,7 +78,7 @@ def indices_to_labels(y, index_to_word):
 
 def load_embeddings(filepath='data/glove.840B.300d.txt'):
     embeddings_index = {}
-    with open(os.path.join(filepath)) as f:
+    with open(os.path.join(filepath), encoding='UTF-8') as f:
         i = 0
         for line in f:
             values = line.split()
@@ -101,6 +103,21 @@ def plot_model_history(model_history):
     axs[1].set_xticks(np.arange(1, len(model_history.history['loss']) + 1), len(model_history.history['loss']) / 10)
     axs[1].legend(['train', 'val'], loc='best')
     plt.show()
+
+
+def create_output_csv(y, predictions, probabilities, x):
+    data = pd.DataFrame()
+
+    data.insert(0, 'text', x)
+    data.insert(0, 'sad', probabilities[:, 0])
+    data.insert(0, 'joy', probabilities[:, 1])
+    data.insert(0, 'disgust', probabilities[:, 2])
+    data.insert(0, 'surprise', probabilities[:, 3])
+    data.insert(0, 'anger', probabilities[:, 4])
+    data.insert(0, 'fear', probabilities[:, 5])
+    data.insert(0, 'predictions', predictions)
+    data.insert(0, 'class', y)
+    data.to_csv('data/output.csv', sep=';')
 
 
 class DummyFile(object):
