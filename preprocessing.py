@@ -37,7 +37,7 @@ def emoticon_to_emoji(text):
 def process_emoji(text):
     for e in emoji.emoji_dict:
         text = text.replace(e, emoji.emoji_dict[e])
-    return text
+    return re.sub("\xf0...", '', str(text))
 
 
 def process_hashtags(text):
@@ -110,7 +110,7 @@ def escape_text(x, emoji2word=False):
 
         x[i] = process_hashtags(x[i])
 
-        # x[i] = process_emoji(x[i])
+        x[i] = process_emoji(x[i])
 
         if emoji2word:
             x[i] = replace_emoji(x[i])
