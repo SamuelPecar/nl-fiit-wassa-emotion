@@ -43,24 +43,17 @@ def process_emoji(text):
 def process_hashtags(text):
     hashtags = re.findall(r" (#\w+)", text)
 
-    # if len(hashtags):
-    #     print(text)
-    #     print(hashtags)
-    #     print('------------------------------------------------------------------------')
 
     for hashtag in hashtags:
-        expanded = " ".join([a for a in re.split('([A-Z][a-z]+)', hashtag) if a])
-        text = text.replace(hashtag, expanded)
+        # expanded = " ".join([a for a in re.split('([A-Z][a-z]+)', hashtag) if a])
+        # text = text.replace(hashtag, expanded)
+        # if hashtag == expanded:
+        processed_hashtag = hashtag[1:]
+        if processed_hashtag in dictionary:
+            text = text.replace(hashtag, processed_hashtag)
+        else:
+            text = text.replace(hashtag, ' ')
 
-        if hashtag == expanded:
-            processed_hashtag = hashtag[1:]
-            if processed_hashtag in dictionary:
-                text = text.replace(hashtag, processed_hashtag)
-
-    # if len(hashtags):
-    #     print(text)
-    #     print(hashtags)
-    #     print('------------------------------------------------------------------------')
 
     return text
 
@@ -117,7 +110,7 @@ def escape_text(x, emoji2word=False):
 
         x[i] = process_hashtags(x[i])
 
-        x[i] = process_emoji(x[i])
+        # x[i] = process_emoji(x[i])
 
         if emoji2word:
             x[i] = replace_emoji(x[i])
