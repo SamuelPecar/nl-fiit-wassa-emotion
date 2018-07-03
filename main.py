@@ -39,8 +39,10 @@ model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor, early_stop_patience=config.early_stop_patience, early_stop_mode=config.early_stop_mode)
 
+weights = model_utils.get_sample_weights_prim(train_y)
+
 # model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.05, callbacks=callbacks, shuffle=True, verbose=config.verbose)
-model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(trial_x_indices, trail_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose)
+model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(trial_x_indices, trail_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose, sample_weight=weights)
 
 print('predict values model')
 
