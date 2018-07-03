@@ -10,11 +10,12 @@ import sys
 tokenizer = Tokenizer(filters='')
 
 
-def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, partition=None):
+def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', header=None, partition=None):
     train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).sample(frac=1).values
     # train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).values
-    test = pd.read_csv(test_file, sep=sep, header=header, quoting=3).values
-    test_label = pd.read_csv(test_labels, sep=sep, header=header).values
+    trial = pd.read_csv(trial_file, sep=sep, header=header, quoting=3).values
+    trial_label = pd.read_csv(trial_labels, sep=sep, header=header).values
+    test = pd.read_csv(test_file, sep=sep, header=header).values
 
     if partition:
         train_x = np.asarray(train[:partition, 1])
@@ -23,14 +24,14 @@ def load_dataset(train_file, test_file, test_labels, sep='\t', header=None, part
         train_x = np.asarray(train[:, 1])
         train_y = np.asarray(train[:, 0])
 
-    test_x = np.asarray(test[:, 1])
-    test_y = np.asarray(test_label[:, 0])
+    trail_x = np.asarray(trial[:, 1])
+    trail_y = np.asarray(trial_label[:, 0])
 
-    return train_x, train_y, test_x, test_y
+    return train_x, train_y, trail_x, trail_y, test_x
 
 
-def create_vocabulary(train_x, test_x):
-    tokenizer.fit_on_texts(np.concatenate((train_x, test_x)))
+def create_vocabulary(train_x, trial_x, test_x):
+    tokenizer.fit_on_texts(np.concatenate((train_x, trial_x, test_x)))
     words_to_index = tokenizer.word_index
     index_to_words = {v: k for k, v in words_to_index.items()}
 
@@ -105,7 +106,7 @@ def plot_model_history(model_history):
     plt.show()
 
 
-def create_output_csv(y, predictions, probabilities, x):
+def create_output_csv(y, predictions, probabilities, x, file='data/output.csv'):
     data = pd.DataFrame()
 
     data.insert(0, 'text', x)
@@ -117,7 +118,7 @@ def create_output_csv(y, predictions, probabilities, x):
     data.insert(0, 'fear', probabilities[:, 5])
     data.insert(0, 'predictions', predictions)
     data.insert(0, 'class', y)
-    data.to_csv('data/output.csv', sep=';')
+    data.to_csv(file, sep=';')
 
 
 class DummyFile(object):

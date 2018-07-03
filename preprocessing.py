@@ -123,8 +123,9 @@ def escape_text(x, emoji2word=False):
     return x, max_len
 
 
-def preprocessing_pipeline(train_x, test_x, emoji2word=False):
+def preprocessing_pipeline(train_x, trial_x, test_x, emoji2word=False):
     train_x, max_len_train = escape_text(train_x, emoji2word)
+    trail_x, max_len_trial = escape_text(trial_x, emoji2word)
     test_x, max_len_test = escape_text(test_x, emoji2word)
 
-    return train_x, test_x, max_len_train if max_len_train > max_len_test else max_len_test
+    return train_x, trail_x, test_x, max(max_len_train, max_len_trial, max_len_test)
