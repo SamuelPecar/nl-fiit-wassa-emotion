@@ -26,6 +26,7 @@ def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', head
 
     trail_x = np.asarray(trial[:, 1])
     trail_y = np.asarray(trial_label[:, 0])
+    test_x = np.asarray(test[:, 1])
 
     return train_x, train_y, trail_x, trail_y, test_x
 
