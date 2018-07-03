@@ -21,7 +21,7 @@ train_x, trial_x, test_x, max_string_length = preprocessing.preprocessing_pipeli
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, trial_x, test_x)
 
 train_y_oh = utils.labels_to_indices(train_y, config.labels_to_index, config.classes)
-trail_y_oh = utils.labels_to_indices(trial_y, config.labels_to_index, config.classes)
+trial_y_oh = utils.labels_to_indices(trial_y, config.labels_to_index, config.classes)
 
 train_x_indices = utils.sentences_to_indices(train_x, words_to_index, max_len=max_string_length)
 trial_x_indices = utils.sentences_to_indices(trial_x, words_to_index, max_len=max_string_length)
@@ -42,19 +42,19 @@ callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monit
 weights = model_utils.get_sample_weights_prim(train_y)
 
 # model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_split=0.05, callbacks=callbacks, shuffle=True, verbose=config.verbose)
-model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(trial_x_indices, trail_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose, sample_weight=weights)
+model_info = model.fit(train_x_indices, train_y_oh, epochs=config.epochs, batch_size=config.batch_size, validation_data=(trial_x_indices, trial_y_oh), callbacks=callbacks, shuffle=True, verbose=config.verbose, sample_weight=weights)
 
 print('predict values model')
 
 probabilities_trial = model.predict(trial_x_indices)
 predictions_trial = utils.indices_to_labels(probabilities_trial.argmax(axis=-1), config.index_to_label)
-microaverage, macroaverage = evaluation.calculate_prf(trail_y_oh.tolist(), predictions_trial)
+microaverage, macroaverage = evaluation.calculate_prf(trial_y_oh.tolist(), predictions_trial)
 utils.create_output_csv(trial_y, predictions_trial, probabilities_trial, trial_x, file='data/trial_results.csv')
 
 probabilities = model.predict(test_x_indices)
 predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
 
-microaverage, macroaverage = evaluation.calculate_prf(trail_y_oh.tolist(), predictions)
+microaverage, macroaverage = evaluation.calculate_prf(trial_y_oh.tolist(), predictions)
 
 utils.create_output_csv(None, predictions, probabilities, test_x, file='data/test_results.csv')
 

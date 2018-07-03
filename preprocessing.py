@@ -44,7 +44,6 @@ def process_emoji(text):
 def process_hashtags(text):
     hashtags = re.findall(r" (#\w+)", text)
 
-
     for hashtag in hashtags:
         # expanded = " ".join([a for a in re.split('([A-Z][a-z]+)', hashtag) if a])
         # text = text.replace(hashtag, expanded)
@@ -52,9 +51,8 @@ def process_hashtags(text):
         processed_hashtag = hashtag[1:]
         if processed_hashtag in dictionary:
             text = text.replace(hashtag, processed_hashtag)
-        # else:
-        #     text = text.replace(hashtag, ' ')
-
+            # else:
+            #     text = text.replace(hashtag, ' ')
 
     return text
 
@@ -126,10 +124,7 @@ def escape_text(x, emoji2word=False):
 
 def preprocessing_pipeline(train_x, trial_x, test_x, emoji2word=False):
     train_x, max_len_train = escape_text(train_x, emoji2word)
-    trail_x, max_len_trial = escape_text(trial_x, emoji2word)
+    trial_x, max_len_trial = escape_text(trial_x, emoji2word)
     test_x, max_len_test = escape_text(test_x, emoji2word)
 
-    print(max(max_len_train, max_len_trial, max_len_test))
-    print(max_len_train, max_len_trial, max_len_test)
-
-    return train_x, trail_x, test_x, max(max_len_train, max_len_trial, max_len_test)
+    return train_x, trial_x, test_x, max(max_len_train, max_len_trial, max_len_test)
