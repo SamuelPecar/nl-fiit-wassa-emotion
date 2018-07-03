@@ -12,6 +12,7 @@ import model_utils
 import evaluation
 import config
 import torch
+import generators
 
 class AbstractEncoder():
     def __init__(self, args):
@@ -87,8 +88,8 @@ class Infersent(AbstractEncoder):
 
 def prepare_data_file(encoder, dataset_size=10000, batch_size=128, mode='original'):  #original, reconstructed, both
     print("...loading&preprocessing dataset")
-    train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels', partition=dataset_size)
-    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
+    train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', partition=dataset_size)
+    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=config.emoji2word)
     print("...preparing candidate sentences:")
     train_x_list = list()
     train_y_list = list()
@@ -219,86 +220,11 @@ def experiment_1(encoder):
     model_info = model.fit(embeddings, train_y_l, epochs=200, batch_size=config.batch_size,
                            validation_split=0.1, shuffle=True, verbose=2)
 
-class MyGenerator(keras.utils.Sequence):
-    def __init__(self, filepath, batch, embedding_size, validation_split=0.1, batch_change=None):
-        self.file = open(filepath, 'r', newline='')
-        self.line_count = 0
-        with open(filepath) as f:
-            for l in f:
-                self.line_count += 1
-        self.line_count = numpy.floor(self.line_count*(1-validation_split))
-        self.batch_change = batch_change
-        self.filepath = filepath
-        self.batch_size = batch
-        self.embedding_size = embedding_size
-        self.n_epochs = 0
-        print("...Train generator initialized:")
-        print("......lines: {}".format(self.line_count))
-        print("......batch size: {}".format(self.batch_size))
-        print("......embedding size: {}".format(self.embedding_size))
-        print("......number of batches: {}".format(self.__len__()))
-    def on_epoch_end(self):
-        self.n_epochs += 1
-        if self.batch_change is not None:
-            if self.n_epochs in self.batch_change:
-                self.batch_size *= 2
-        self.file.close()
-        self.file = open(self.filepath, 'r', newline='')
-    def __len__(self):
-        return int(numpy.floor(self.line_count / self.batch_size))
-    def __getitem__(self, index):
-        result_x = numpy.zeros((self.batch_size, self.embedding_size))
-        result_y = numpy.zeros((self.batch_size, 6))
-        for i in range(0, self.batch_size):
-            line = self.file.readline()
-            result_x[i] = numpy.fromstring(line.split(',')[1][1:-1], dtype=numpy.float32, sep=' ')
-            label = line.split(',')[0]
-            result_y[i] = utils.labels_to_indices(numpy.asarray([label]), config.labels_to_index, 6)
-        return result_x, result_y
-
-class MyValidationGenerator(keras.utils.Sequence):
-    def __init__(self, filepath, batch, embedding_size, validation_split=0.1):
-        self.file = open(filepath, 'r', newline='')
-        self.total_line_count = 0
-        with open(filepath) as f:
-            for l in f:
-                self.total_line_count += 1
-        self.validation_split = validation_split
-        self.train_line_count = int(numpy.floor(self.total_line_count*(1-self.validation_split)))
-        self.val_line_count = int(numpy.ceil(self.total_line_count*self.validation_split))
-        for i in range(0, self.train_line_count):
-            line = self.file.readline()
-        self.filepath = filepath
-        self.batch_size = batch
-        self.embedding_size = embedding_size
-        print("...Validation generator initialized:")
-        print("......lines: {}".format(self.val_line_count))
-        print("......batch size: {}".format(self.batch_size))
-        print("......embedding size: {}".format(self.embedding_size))
-        print("......number of batches: {}".format(self.__len__()))
-    def __len__(self):
-        return int(numpy.floor(self.val_line_count / self.batch_size))
-    def __getitem__(self, index):
-        result_x = numpy.zeros((self.batch_size, self.embedding_size))
-        result_y = numpy.zeros((self.batch_size, 6))
-        for i in range(0, self.batch_size):
-            line = self.file.readline()
-            if line == '':
-                self.file.close()
-                self.file = open(self.filepath, 'r', newline='')
-                for ll in range(0, self.train_line_count):
-                    line = self.file.readline()
-                line = self.file.readline()
-            result_x[i] = numpy.fromstring(line.split(',')[1][1:-1], dtype=numpy.float32, sep=' ')
-            label = line.split(',')[0]
-            result_y[i] = utils.labels_to_indices(numpy.asarray([label]), config.labels_to_index, 6)[0]
-        return result_x, result_y
-
 def prepare_testdata():
     print("...Preparing test set")
 
     test = pd.read_csv('data/trial.csv', sep='\t', header=None).values
-    test_label = pd.read_csv('data/test.labels', sep="\t", header=None).values
+    test_label = pd.read_csv('data/trial.labels', sep="\t", header=None).values
 
     test_x = numpy.asarray(test[:, 1])
     test_label = numpy.asarray(test_label[:, 0])
@@ -333,7 +259,7 @@ def experiment_2(): # w/o candidates
                                           early_stop_patience=config.early_stop_patience,
                                           early_stop_mode=config.early_stop_mode)
 
-    model_info = model.fit_generator(MyGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= MyValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=200, verbose=2)
+    model_info = model.fit_generator(generators.MySMGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= generators.MySMValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=400, verbose=2)
 
     print('...Evaluation')
     loss, acc, f1, precision, recall = model.evaluate(test_x_s, test_y, verbose=2)

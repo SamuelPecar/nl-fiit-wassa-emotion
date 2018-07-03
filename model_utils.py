@@ -46,23 +46,23 @@ def get_SM_model(input_shape, classes=6):
 def get_SM_model_2(input_shape, classes=6):
     sentence = Input(shape=input_shape, dtype='float32')
 
-    # x = GaussianNoise(0.15)(sentence)
-    # x_d = Dropout(0.3)(x)
-    # x = Dense(units=512, activation="relu")(x_d)
-    # y = Dense(units=512, activation="tanh")(x_d)
-    # x = Concatenate(axis=-1)([x, y])
-    # x = Dropout(rate=0.1)(x)
-    # #x = Dense(units=512, activation="relu")(x)
+    x = GaussianNoise(0.05)(sentence)
+    x_d = Dropout(0.1)(x)
+    x = Dense(units=2048, activation="relu")(x_d)
+    y = Dense(units=2048, activation="tanh")(x_d)
+    x = Concatenate(axis=-1)([x, y])
+    #x = Dropout(rate=0.1)(x)
+    x = Dense(units=2048, activation="relu")(x)
+    x = Dense(units=classes, activation="softmax")(x)
+
+    # x = Dense(units=2048, activation="relu")(sentence)
     # x = Dense(units=classes, activation="softmax")(x)
 
-    #x = Dense(units=2048, activation="relu")(sentence)
-    #x = Dense(units=classes, activation="softmax")(x)
-
-    x = GaussianNoise(0.05)(sentence)
-    x = Dropout(0.1)(x)
-
-    x = Dense(units=512, activation="relu")(x)
-    x = Dense(units=classes, activation="softmax")(x)
+    # x = GaussianNoise(0.05)(sentence)
+    # x = Dropout(0.1)(x)
+    #
+    # x = Dense(units=512, activation="relu")(x)
+    # x = Dense(units=classes, activation="softmax")(x)
 
     return Model(inputs=sentence, outputs=x)
 
@@ -87,3 +87,19 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
     x = Dense(units=classes, activation="softmax")(x)
 
     return Model(inputs=sentence_indices, outputs=x)
+
+def get_sample_weights(model, train_x, train_y, filename):
+
+    predictions = model.predict(train_x)
+    samples_weights = np.zeros((train_x.shape[0]))
+    #for sample in predictions:
+    return NotImplementedError
+
+def get_sample_weights_prim(train_y, target='anger', class_weight = 2.0, base_weight = 1.0):
+    weights = np.zeros(train_y.shape[0])
+    for index, sample in enumerate(train_y):
+        if sample == target:
+            weights[index] = class_weight
+        else:
+            weights[index] = base_weight
+    return weights
