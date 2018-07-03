@@ -15,7 +15,7 @@ def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', head
     # train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).values
     trial = pd.read_csv(trial_file, sep=sep, header=header, quoting=3).values
     trial_label = pd.read_csv(trial_labels, sep=sep, header=header).values
-    test = pd.read_csv(test_file, sep=sep, header=header).values
+    test = pd.read_csv(test_file, sep=sep, header=header, quoting=3).values
 
     if partition:
         train_x = np.asarray(train[:partition, 1])
