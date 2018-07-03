@@ -37,7 +37,8 @@ def emoticon_to_emoji(text):
 def process_emoji(text):
     for e in emoji.emoji_dict:
         text = text.replace(e, emoji.emoji_dict[e])
-    return re.sub("\xf0...", '', str(text))
+    # return re.sub("\xf0...", '', str(text))
+    return text
 
 
 def process_hashtags(text):
@@ -51,8 +52,8 @@ def process_hashtags(text):
         processed_hashtag = hashtag[1:]
         if processed_hashtag in dictionary:
             text = text.replace(hashtag, processed_hashtag)
-        else:
-            text = text.replace(hashtag, ' ')
+        # else:
+        #     text = text.replace(hashtag, ' ')
 
 
     return text
@@ -127,5 +128,8 @@ def preprocessing_pipeline(train_x, trial_x, test_x, emoji2word=False):
     train_x, max_len_train = escape_text(train_x, emoji2word)
     trail_x, max_len_trial = escape_text(trial_x, emoji2word)
     test_x, max_len_test = escape_text(test_x, emoji2word)
+
+    print(max(max_len_train, max_len_trial, max_len_test))
+    print(max_len_train, max_len_trial, max_len_test)
 
     return train_x, trail_x, test_x, max(max_len_train, max_len_trial, max_len_test)
