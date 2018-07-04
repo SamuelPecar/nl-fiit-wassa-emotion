@@ -96,11 +96,8 @@ def get_sample_weights(model, train_x, train_y, filename):
     return NotImplementedError
 
 
-def get_sample_weights_prim(train_y, target='anger', class_weight=2.0, base_weight=1.0):
+def get_sample_weights_prim(train_y, class_weight):
     weights = np.zeros(train_y.shape[0])
     for index, sample in enumerate(train_y):
-        if sample == target:
-            weights[index] = class_weight
-        else:
-            weights[index] = base_weight
+        weights[index] = class_weight[sample]
     return weights

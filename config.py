@@ -46,3 +46,12 @@ index_to_label = {
     4: "anger",
     5: "fear"
 }
+
+class_weight = {
+    "sad": 1.0,
+    "joy": 1.0,
+    "disgust": 1.0,
+    "surprise": 1.0,
+    "anger": 1.0,
+    "fear": 1.0
+}

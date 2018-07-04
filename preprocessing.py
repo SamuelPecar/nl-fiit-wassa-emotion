@@ -109,7 +109,7 @@ def escape_text(x, emoji2word=False):
 
         x[i] = process_hashtags(x[i])
 
-        x[i] = process_emoji(x[i])
+        # x[i] = process_emoji(x[i])
 
         if emoji2word:
             x[i] = replace_emoji(x[i])
