@@ -131,6 +131,7 @@ def preprocessing_pipeline(train_x, trial_x, test_x, emoji2word=False):
     test_x, max_len_test = escape_text(test_x, emoji2word)
 
     return train_x, trial_x, test_x, max(max_len_train, max_len_trial, max_len_test)
+    return train_x, trial_x, test_x, max(max_len_train, max_len_trial, max_len_test)
 
 def preprocess_through_ekphrasis(train_file_path, test_file_path, trial_file_path):
     text_processor = TextPreProcessor(

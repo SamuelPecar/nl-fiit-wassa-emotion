@@ -46,7 +46,7 @@ def get_SM_model(input_shape, classes=6):
 def get_SM_model_2(input_shape, classes=6, reg_par=0.0):
     sentence = Input(shape=input_shape, dtype='float32')
 
-    x = GaussianNoise(0.1)(sentence)
+    x = GaussianNoise(0.05)(sentence)
     x_d = Dropout(0.1)(x)
     x = Dense(units=2048, activation=None, kernel_regularizer=l1_l2(reg_par, reg_par), bias_regularizer=l1_l2(reg_par, reg_par))(x_d)
     x = PReLU()(x)
@@ -83,17 +83,13 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
     return Model(inputs=sentence_indices, outputs=x)
 
 def get_sample_weights(model, train_x, train_y, filename):
-
     predictions = model.predict(train_x)
     samples_weights = np.zeros((train_x.shape[0]))
-    #for sample in predictions:
+    # for sample in predictions:
     return NotImplementedError
 
 def get_sample_weights_prim(train_y, target='anger', class_weight = 2.0, base_weight = 1.0):
     weights = np.zeros(train_y.shape[0])
     for index, sample in enumerate(train_y):
-        if sample == target:
-            weights[index] = class_weight
-        else:
-            weights[index] = base_weight
+        weights[index] = class_weight[sample]
     return weights
