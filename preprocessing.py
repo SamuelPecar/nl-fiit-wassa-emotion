@@ -2,6 +2,9 @@
 import re
 from files import emotions
 from files import emoji
+from ekphrasis.classes.preprocessor import TextPreProcessor
+from ekphrasis.classes.tokenizer import SocialTokenizer
+from ekphrasis.dicts.emoticons import emoticons
 
 emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UTF-8')]
 dictionary = [line.rstrip('\n') for line in open('files/dict.txt', encoding='UTF-8')]
@@ -44,7 +47,6 @@ def process_emoji(text):
 def process_hashtags(text):
     hashtags = re.findall(r" (#\w+)", text)
 
-
     for hashtag in hashtags:
         # expanded = " ".join([a for a in re.split('([A-Z][a-z]+)', hashtag) if a])
         # text = text.replace(hashtag, expanded)
@@ -52,9 +54,8 @@ def process_hashtags(text):
         processed_hashtag = hashtag[1:]
         if processed_hashtag in dictionary:
             text = text.replace(hashtag, processed_hashtag)
-        # else:
-        #     text = text.replace(hashtag, ' ')
-
+            # else:
+            #     text = text.replace(hashtag, ' ')
 
     return text
 
@@ -111,7 +112,7 @@ def escape_text(x, emoji2word=False):
 
         x[i] = process_hashtags(x[i])
 
-        x[i] = process_emoji(x[i])
+        # x[i] = process_emoji(x[i])
 
         if emoji2word:
             x[i] = replace_emoji(x[i])
@@ -126,10 +127,37 @@ def escape_text(x, emoji2word=False):
 
 def preprocessing_pipeline(train_x, trial_x, test_x, emoji2word=False):
     train_x, max_len_train = escape_text(train_x, emoji2word)
-    trail_x, max_len_trial = escape_text(trial_x, emoji2word)
+    trial_x, max_len_trial = escape_text(trial_x, emoji2word)
     test_x, max_len_test = escape_text(test_x, emoji2word)
 
-    print(max(max_len_train, max_len_trial, max_len_test))
-    print(max_len_train, max_len_trial, max_len_test)
+    return train_x, trial_x, test_x, max(max_len_train, max_len_trial, max_len_test)
 
-    return train_x, trail_x, test_x, max(max_len_train, max_len_trial, max_len_test)
+def preprocess_through_ekphrasis(train_file_path, test_file_path, trial_file_path):
+    text_processor = TextPreProcessor(
+        normalize=['url', 'email', 'percent', 'money', 'phone', 'user',
+                   'time', 'url', 'date', 'number'],
+        annotate={"hashtag", "allcaps", "elongated", "repeated",
+                  'emphasis', 'censored'},
+        fix_html=True,
+        segmenter="twitter",
+        corrector="twitter",
+        unpack_hashtags=True,
+        unpack_contractions=True,
+        spell_correct_elong=True,
+        spell_correction=True,
+        all_caps_tag="wrap",
+        fix_bad_unicode=True,
+        tokenizer=SocialTokenizer(lowercase=True).tokenize,
+        dicts=[emoticons]
+    )
+
+    for file_path in [train_file_path, test_file_path, trial_file_path]:
+        with open(file_path, 'r', newline='') as file:
+            new_sentences = list()
+            labels = list()
+            for line in file:
+                labels.append(line.split('\t')[0])
+                new_sentences.append(" ".join(text_processor.pre_process_doc(line.split('\t')[1])))
+        with open(file_path[:-4]+"_ekphrasis.csv", 'w', newline='') as new_file:
+            for label, sentence in zip(labels, new_sentences):
+                new_file.write("{}\t{}\n".format(label, sentence.replace("[ <hashtag> triggerword </hashtag> #]", "[#TRIGGERWORD#]")))
