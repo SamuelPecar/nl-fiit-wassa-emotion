@@ -1,10 +1,10 @@
 import sys
 import utils
 import model_utils
-import preprocessing
-import evaluation
+import modules.preprocessing as preprocessing
+import modules.evaluation as evaluation
 import config
-import slack
+import modules.slack as slack
 
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")

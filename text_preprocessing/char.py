@@ -26,3 +26,8 @@ def char_replacing(text):
     text = re.sub("http://url.removed", " ", text)
 
     return text
+
+def char_escape(text):
+    text = re.sub(r"[‼.,?!…*]", " \1 ", text)
+
+    return text

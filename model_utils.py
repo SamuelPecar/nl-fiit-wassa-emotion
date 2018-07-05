@@ -5,7 +5,7 @@ from keras.callbacks import EarlyStopping
 from keras.regularizers import l1_l2
 from keras.layers.noise import GaussianNoise
 import numpy as np
-from attention import Attention
+from modules.attention import Attention
 
 
 # val_f1_c
@@ -61,6 +61,7 @@ def get_SM_model_2(input_shape, classes=6, reg_par=0.0):
 
     return Model(inputs=sentence, outputs=x)
 
+
 def get_model(input_shape, embedding_layer, classes=6, units=1024):
     sentence_indices = Input(shape=input_shape, dtype='int32')
 
@@ -82,11 +83,13 @@ def get_model(input_shape, embedding_layer, classes=6, units=1024):
 
     return Model(inputs=sentence_indices, outputs=x)
 
+
 def get_sample_weights(model, train_x, train_y, filename):
     predictions = model.predict(train_x)
     samples_weights = np.zeros((train_x.shape[0]))
     # for sample in predictions:
     return NotImplementedError
+
 
 def get_sample_weights_prim(train_y, class_weight):
     weights = np.zeros(train_y.shape[0])
