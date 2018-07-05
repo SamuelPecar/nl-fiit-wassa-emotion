@@ -19,6 +19,8 @@ class AbstractEncoder():
         print("...Initializing encoder of type {}".format(type(self)))
     def use(self, sentences_to_embed):
         print("Not implemented!")
+    def getLambda(self):
+        raise NotImplementedError
 # class Sent2Vec(AbstractEncoder):
 #     def __init__(self):
 #         self.model = sent2vec.Sent2vecModel()
@@ -77,6 +79,16 @@ class Infersent(AbstractEncoder):
             definitions_emb.append(self.infersent.encode([definition], tokenize=True)[0])
 
         return definitions_emb
+
+    def use_lambda(self, sentences_to_embed):
+        definitions_emb = numpy.zeros((32, self.getSize()))
+        for index in range(0, 32):
+            definitions_emb[index] = self.infersent.encode([sentences_to_embed[index]], tokenize=True)
+
+        return definitions_emb
+
+    def getLambda(self):
+        return keras.layers.Lambda(self.use_lambda)
     @staticmethod
     def getName():
         return "InferSent"
@@ -229,7 +241,7 @@ def prepare_testdata():
     test_x = numpy.asarray(test[:, 1])
     test_label = numpy.asarray(test_label[:, 0])
 
-    test_x = preprocessing.preprocessing_pipeline([], test_x)[1]
+    test_x = preprocessing.preprocessing_pipeline([], [], test_x)[2]
     test_y = utils.labels_to_indices(test_label, config.labels_to_index, 6)
 
     encoder = Infersent(test_x)
@@ -238,10 +250,11 @@ def prepare_testdata():
     i=0
     while(True):
         print('\r......{0}/{1}'.format(i, test_x.shape[0]), end="")
-        if i >= test_x.shape[0]:
-            break
         test_x_s[i:i+64] = encoder.use(test_x[i:i+64])
         i += 64
+        if i >= test_x.shape[0]:
+            break
+
     # for index, sentence in enumerate(test_x):
     #     print('\r......{0}/{1}'.format(index, test_x.shape[0]), end="")
     #
@@ -259,7 +272,7 @@ def experiment_2(): # w/o candidates
                                           early_stop_patience=config.early_stop_patience,
                                           early_stop_mode=config.early_stop_mode)
 
-    model_info = model.fit_generator(generators.MySMGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= generators.MySMValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=400, verbose=2)
+    model_info = model.fit_generator(generators.MySMGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= generators.MySMValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=40, verbose=2)
 
     print('...Evaluation')
     loss, acc, f1, precision, recall = model.evaluate(test_x_s, test_y, verbose=2)
