@@ -161,4 +161,4 @@ def preprocess_through_ekphrasis(train_file_path, test_file_path, trial_file_pat
                 new_sentences.append(" ".join(text_processor.pre_process_doc(line.split('\t')[1])))
         with open(file_path[:-4]+"_ekphrasis.csv", 'w', newline='') as new_file:
             for label, sentence in zip(labels, new_sentences):
-                new_file.write("{}\t{}\n".format(label, sentence.replace("[ <hashtag> triggerword </hashtag> #]", "[#TRIGGERWORD#]")))
+                new_file.write("{}\t{}\n".format(label, sentence.replace("[ <hashtag> triggerword </hashtag> #]", "[#TRIGGERWORD#]").replace("[ <allcaps> newline </allcaps> ]", "[NEWLINE]")))
