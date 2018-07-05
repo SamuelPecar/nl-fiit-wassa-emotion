@@ -11,8 +11,7 @@ if sys.version_info[0] < 3:
 
 print('Preparing data')
 
-# train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', partition=config.partition)
-train_x, train_y, trial_x, trial_y, test_x = utils.load_dataset('data/train_processed.csv', 'data/trial_processed.csv', 'data/trial.labels', 'data/test.csv', partition=config.partition)
+train_x, train_y, trial_x, trial_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', 'data/test.csv', partition=config.partition)
 
 
 print('Preprocessing data')

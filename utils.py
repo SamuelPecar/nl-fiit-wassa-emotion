@@ -27,8 +27,9 @@ def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', head
     trial_x = np.asarray(trial[:, 1])
     trial_y = np.asarray(trial_label[:, 0])
     test_x = np.asarray(test[:, 1])
+    test_y = np.asarray(test[:, 0])
 
-    return train_x, train_y, trial_x, trial_y, test_x
+    return train_x, train_y, trial_x, trial_y, test_x, test_y
 
 
 def create_vocabulary(train_x, trial_x, test_x):
