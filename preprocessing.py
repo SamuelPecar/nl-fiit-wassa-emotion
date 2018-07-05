@@ -1,55 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
 from files import emoji
-
-emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UTF-8')]
-dictionary = [line.rstrip('\n') for line in open('files/dict.txt', encoding='UTF-8')]
-
-
-def escape_emoji(text):
-    for emoji in emoji_list:
-        text = text.replace(emoji, ' ' + emoji + ' ')
-    return text
-
-
-def emoticon_to_emoji(text):
-    text = re.sub(r":\)", " 🙂 ", text)
-    text = re.sub(r":-\)", " 🙂 ", text)
-    text = re.sub(r":D", " 😀 ", text)
-    text = re.sub(r":-D", " 😀 ", text)
-    text = re.sub(r":\(", " 🙁 ", text)
-    text = re.sub(r":-\(", " 🙁 ", text)
-    text = re.sub(r";\)", " 😉 ", text)
-    text = re.sub(r";-\)", " 😉 ", text)
-
-    return text
-
-
-def process_emoji(text):
-    for e in emoji.emoji_dict:
-        text = text.replace(e, emoji.emoji_dict[e])
-    # return re.sub("\xf0...", '', str(text))
-    return text
-
-
-def process_hashtags(text):
-    hashtags = re.findall(r" (#\w+)", text)
-
-    for hashtag in hashtags:
-        processed_hashtag = hashtag[1:]
-        if processed_hashtag in dictionary:
-            text = text.replace(hashtag, processed_hashtag)
-
-    return text
+from text_preprocessing import emoji, hashtag, char
 
 
 def escape_chars(text):
-    text = text.replace("[NEWLINE]", ". ")
-    text = text.replace("http://url.removed", "")
-    text = text.replace("@USERNAME", "")
-
-    text = re.sub(r"\s", " ", text)
-    text = re.sub(r"[‘´’]", "\'", text)
     text = re.sub(r"[”“❝„\"]", " ", text)
     text = re.sub("/", " / ", text)
 
@@ -85,15 +40,25 @@ def escape_chars(text):
     return text
 
 
+def preprocess_text(text):
+    text = char.char_removing(text)
+    text = char.char_replacing(text)
+    text = char.currency_replace(text)
+    text = emoji.emoticon_to_emoji(text)
+    text = emoji.emoji_gender(text)
+    text = re.sub(r"\s+", " ", text)
+    text = emoji.emoji_categorization(text)
+    text = emoji.escape_emoji(text)
+    # text = hashtag.process_hashtags(text)
+    text = re.sub(r"\s+", " ", text)
+
+    return text
+
+
 def preprocessing(x):
     max_len = 0
     for i in range(len(x)):
-
-        x[i] = escape_emoji(x[i])
-        x[i] = emoticon_to_emoji(x[i])
-        x[i] = process_hashtags(x[i])
-        x[i] = process_emoji(x[i])
-        x[i] = escape_chars(x[i])
+        x[i] = preprocess_text(x[i])
 
         if len(x[i].split()) > max_len:
             max_len = len(x[i].split())

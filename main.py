@@ -15,7 +15,7 @@ train_x, train_y, trial_x, trial_y, test_x, test_y = utils.load_dataset('data/tr
 
 
 print('Preprocessing data')
-train_x, trial_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, trial_x, test_x, emoji2word=config.emoji2word)
+train_x, trial_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, trial_x, test_x)
 
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, trial_x, test_x)
 
