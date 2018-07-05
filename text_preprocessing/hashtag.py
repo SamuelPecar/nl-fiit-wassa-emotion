@@ -1,6 +1,6 @@
 import re
 
-dictionary = [line.rstrip('\n') for line in open('../files/dict.txt', encoding='UTF-8')]
+dictionary = [line.rstrip('\n') for line in open('files/dict.txt', encoding='UTF-8')]
 
 
 def process_hashtags(text):

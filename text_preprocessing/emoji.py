@@ -1,6 +1,6 @@
 import re
 
-emoji_list = [line.rstrip('\n') for line in open('../files/emoji.txt', encoding='UTF-8')]
+emoji_list = [line.rstrip('\n') for line in open('files/emoji.txt', encoding='UTF-8')]
 
 
 def escape_emoji(text):
