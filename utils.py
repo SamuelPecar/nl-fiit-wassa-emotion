@@ -85,8 +85,16 @@ def load_embeddings(filepath='data/glove.840B.300d.txt'):
         for line in f:
             values = line.split()
             word = values[0]
-            coefs = np.asarray(values[1:], dtype='float32')
+            try:
+                coefs = np.asarray(values[1:], dtype='float32')
+            except:
+                i += 1
+                continue
             embeddings_index[word] = coefs
+        if i==0:
+            print("...embeddings loaded")
+        else:
+            print("...embeddings loaded with {} errors (can be ignored)".format(i))
         return embeddings_index
 
 
