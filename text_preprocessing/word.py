@@ -1,12 +1,23 @@
 import re
 
 
-def word_replace(text):
+def word_expanding(text):
     text = re.sub(r"(\b)([Ii])'m", r"\1\2 am", text)
     text = re.sub(r"(\b)([Tt]hey|[Ww]e|[Ww]hat|[Ww]ho|[Yy]ou)'re", r"\1\2 are", text)
     text = re.sub(r"(\b)([Ll]et)'s", r"\1\2 us", text)
     text = re.sub(r"(\b)([Hh]e|[Ii]|[Ss]he|[Tt]hey|[Ww]e|[Ww]hat|[Ww]ho|[Yy]ou)'ll", r"\1\2 will", text)
     text = re.sub(r"(\b)([Ii]|[Ss]hould|[Tt]hey|[Ww]e|[Ww]hat|[Ww]ho|[Ww]ould|[Yy]ou)'ve", r"\1\2 have", text)
+    text = re.sub(r"'d", " would", text)
+    text = re.sub(r"'s", " is", text)
+    text = re.sub(r"ain't", "is not", text)
+    return text
+
+
+def word_replace(text):
+    text = text.replace("[NEWLINE]", " ")
+    text = text.replace("http://url.removed", "")
+    text = text.replace("@USERNAME", "")
+
     return text
 
 

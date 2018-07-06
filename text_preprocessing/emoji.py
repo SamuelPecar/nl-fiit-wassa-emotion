@@ -41,6 +41,7 @@ def emoji_categorization(text):
     text = re.sub(r"[😗😙😚😍😽😻😘]+", "😘", text)
     text = re.sub(r"[😮😯😲🙀]+", "😮", text)
     text = re.sub(r"[😨😧😦]+", "😦", text)
+    text = re.sub(r"[😏]+", "😏", text)
     text = re.sub(r"[😜😝😛]+", "😛", text)
     text = re.sub(r"[🤣😹😂]+", "😂", text)
     text = re.sub(r"[😿😢😭😥😪😢]+", "😢", text)
