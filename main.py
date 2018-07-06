@@ -17,6 +17,8 @@ train_x, train_y, trial_x, trial_y, test_x, test_y = utils.load_dataset('data/tr
 print('Preprocessing data')
 train_x, trial_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, trial_x, test_x)
 
+print('Words to index')
+
 vocab_length, words_to_index, index_to_words = utils.create_vocabulary(train_x, trial_x, test_x)
 
 train_y_oh = utils.labels_to_indices(train_y, config.labels_to_index, config.classes)

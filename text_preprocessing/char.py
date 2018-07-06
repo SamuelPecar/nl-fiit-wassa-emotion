@@ -15,12 +15,15 @@ def char_removing(text):
     text = text.replace("http://url.removed", "")
     text = re.sub(r"[ं-ో̇]", "", text)
     text = re.sub(r"[•]", "", text)
+    text = re.sub(r"[】【]", "", text)
+    text = re.sub(r"[0-9]+", " ", text)
 
     return text
 
 
 def char_replacing(text):
     text = re.sub(r"[‘´’̇]+", "\'", text)
+    text = re.sub(r"[#̇]+", "#", text)
     text = re.sub(r"\s+", " ", text)
     text = re.sub("\[NEWLINE\]", " ", text)
     text = re.sub("http://url.removed", " ", text)
@@ -30,7 +33,7 @@ def char_replacing(text):
 
 
 def char_escape(text):
-    text = re.sub(r"[‼.,?!…*/\&|]", " \1 ", text)
+    text = re.sub(r"[‼.,;:?!…*/\&|_\{\}<>~\+=\-\(\)\^™\\\%]+", " \1 ", text)
     text = re.sub(r'\'\b', '\' \1', text)
     text = re.sub(r'\b\'', '\1 \'', text)
     text = re.sub(r'\(\b', '\( \1', text)
@@ -44,6 +47,8 @@ def char_escape(text):
     text = re.sub(r'\b\^', '\1 \^', text)
     text = re.sub(r'\^\b', '\^ \1', text)
 
-    text = text.replace("@USERNAME", " @USERNAME ")
+    text = re.sub("@USERNAME", " @USERNAME ", text)
+    text = re.sub("\[#TRIGGERWORD#\]", " [#TRIGGERWORD#] ", text)
+    text = re.sub("un +\[#TRIGGERWORD#\]", "un[#TRIGGERWORD#]", text)
 
     return text

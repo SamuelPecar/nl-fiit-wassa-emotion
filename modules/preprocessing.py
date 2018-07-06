@@ -5,35 +5,28 @@ from text_preprocessing import emoji, hashtag, char, word
 
 
 def escape_chars(text):
-
-    text = re.sub(r"[~+=<>{};|_]", " ", text)
-    text = re.sub(r"[0-9]", " ", text)
-
     text = re.sub(r"'s", " is", text)
     text = re.sub(r"'d", " would", text)
-
-
     return text
 
 
 def preprocess_text(text):
+    text = emoji.emoticon_to_emoji(text)
+    text = emoji.emoji_categorization(text)
+    text = emoji.escape_emoji(text)
+    text = emoji.emoji_gender(text)
+
+    text = word.word_replace(text)
+    text = word.word_negation(text)
+
     text = char.char_removing(text)
     text = char.char_replacing(text)
     text = char.currency_replace(text)
     text = char.char_escape(text)
 
-    text = word.word_replace(text)
-    text = word.word_negation(text)
+    text = hashtag.process_hashtags(text)
 
-
-    text = emoji.emoticon_to_emoji(text)
-    text = emoji.emoji_gender(text)
-    text = re.sub(r"\s+", " ", text)
-    text = emoji.emoji_categorization(text)
-    text = emoji.escape_emoji(text)
-
-    # text = hashtag.process_hashtags(text)
-
+    text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff]', '', text)
     text = re.sub(r"\s+", " ", text)
 
     return text
