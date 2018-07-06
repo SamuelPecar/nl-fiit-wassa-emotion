@@ -1,41 +1,17 @@
 # -*- coding: utf-8 -*-
 import re
 from files import emoji
-from text_preprocessing import emoji, hashtag, char
+from text_preprocessing import emoji, hashtag, char, word
 
 
 def escape_chars(text):
-    text = re.sub(r"[”“❝„\"]", " ", text)
-    text = re.sub("/", " / ", text)
 
-    text = re.sub(r"[‼.,?!…*]", " ", text)
-    text = re.sub(r"[\(\)~+=<>{}:;\-—|_\^]", " ", text)
+    text = re.sub(r"[~+=<>{};|_]", " ", text)
     text = re.sub(r"[0-9]", " ", text)
 
-    # text = text.replace("‼", " ‼ ")
-    # text = text.replace(".", " . ")
-    # text = text.replace(",", " , ")
-    # text = text.replace("!", " ! ")
-    # text = text.replace("?", " ? ")
-    # text = text.replace("…", " … ")
-    # text = text.replace("*", " * ")
-
-    text = re.sub(" '", " \' ", text)
-    text = re.sub("' ", " \' ", text)
-    text = re.sub(r"^'", " \' ", text)
-    text = re.sub(r"'$", " \' ", text)
-
-    text = re.sub(r"'m", " am", text)
-    text = re.sub(r"'re", " are", text)
     text = re.sub(r"'s", " is", text)
-    text = re.sub(r"'ll", " will", text)
     text = re.sub(r"'d", " would", text)
-    text = re.sub(r"'ve", " have", text)
-    text = re.sub(r"can't", " cannot ", text)
-    text = re.sub(r"n't", " not ", text)
-    text = re.sub(r"\$", " dollar ", text)
-    text = re.sub(r"£", " pound ", text)
-    text = re.sub(r"€", " euro ", text)
+
 
     return text
 
@@ -44,12 +20,20 @@ def preprocess_text(text):
     text = char.char_removing(text)
     text = char.char_replacing(text)
     text = char.currency_replace(text)
+    text = char.char_escape(text)
+
+    text = word.word_replace(text)
+    text = word.word_negation(text)
+
+
     text = emoji.emoticon_to_emoji(text)
     text = emoji.emoji_gender(text)
     text = re.sub(r"\s+", " ", text)
     text = emoji.emoji_categorization(text)
     text = emoji.escape_emoji(text)
+
     # text = hashtag.process_hashtags(text)
+
     text = re.sub(r"\s+", " ", text)
 
     return text

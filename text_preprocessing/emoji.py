@@ -83,6 +83,7 @@ def emoji_categorization(text):
 
 def emoticon_to_emoji(text):
     text = re.sub(r":-*\)+", "🙂", text)
+    text = re.sub(r"\(+-*:", "🙂", text)
     text = re.sub(r":-*(d|D)+", "😀", text)
     text = re.sub(r"x-*(d|D)+", "😀", text)
     text = re.sub(r":-*(p|P)+", "😛", text)
@@ -92,8 +93,8 @@ def emoticon_to_emoji(text):
     text = re.sub(r":-*/+", "😕", text)
     text = re.sub(r":-*\*+", "😘", text)
     text = re.sub(r":-*(o|O)+", "😮", text)
-    text = re.sub(r":'-*\)+", "😂", text)
-    text = re.sub(r":'-*\(+", "😢", text)
+    text = re.sub(r":'+-*\)+", "😂", text)
+    text = re.sub(r":'+-*\(+", "😢", text)
     text = re.sub(r">_<", "😣", text)
     text = re.sub(r"\(-_-\)zzz", "😴", text)
     text = re.sub(r"-_+-", "😑", text)

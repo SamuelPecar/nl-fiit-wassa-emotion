@@ -13,8 +13,8 @@ def currency_replace(text):
 
 def char_removing(text):
     text = text.replace("http://url.removed", "")
-    text = text.replace("@USERNAME", " @USERNAME ")
     text = re.sub(r"[ं-ో̇]", "", text)
+    text = re.sub(r"[•]", "", text)
 
     return text
 
@@ -24,10 +24,26 @@ def char_replacing(text):
     text = re.sub(r"\s+", " ", text)
     text = re.sub("\[NEWLINE\]", " ", text)
     text = re.sub("http://url.removed", " ", text)
+    text = re.sub(r"[”“❝„\"]", " \" ", text)
 
     return text
 
+
 def char_escape(text):
-    text = re.sub(r"[‼.,?!…*]", " \1 ", text)
+    text = re.sub(r"[‼.,?!…*/\&|]", " \1 ", text)
+    text = re.sub(r'\'\b', '\' \1', text)
+    text = re.sub(r'\b\'', '\1 \'', text)
+    text = re.sub(r'\(\b', '\( \1', text)
+    text = re.sub(r'\b\)', '\1 \)', text)
+    text = re.sub(r':\b', ': \1', text)
+    text = re.sub(r'\b:', '\1 :', text)
+    text = re.sub(r'\-\b', '- \1', text)
+    text = re.sub(r'\b\-', '\1 -', text)
+    text = re.sub(r'—\b', '- \1', text)
+    text = re.sub(r'\b—', '\1 -', text)
+    text = re.sub(r'\b\^', '\1 \^', text)
+    text = re.sub(r'\^\b', '\^ \1', text)
+
+    text = text.replace("@USERNAME", " @USERNAME ")
 
     return text
