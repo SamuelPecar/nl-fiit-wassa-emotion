@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
 from text_preprocessing import emoji, hashtag, char, word
-from test import length_stats
 
 def escape_chars(text):
     text = re.sub(r"'s", " is", text)
