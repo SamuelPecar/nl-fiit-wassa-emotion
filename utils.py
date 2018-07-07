@@ -10,24 +10,24 @@ import sys
 tokenizer = Tokenizer(filters='')
 
 
-def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', header=None, partition=None):
+def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', header=None):
     train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).sample(frac=1).values
-    # train = pd.read_csv(train_file, sep=sep, header=header, quoting=3).values
     trial = pd.read_csv(trial_file, sep=sep, header=header, quoting=3).values
     trial_label = pd.read_csv(trial_labels, sep=sep, header=header).values
     test = pd.read_csv(test_file, sep=sep, header=header, quoting=3).values
 
-    if partition:
-        train_x = np.asarray(train[:partition, 1])
-        train_y = np.asarray(train[:partition, 0])
-    else:
-        train_x = np.asarray(train[:, 1])
-        train_y = np.asarray(train[:, 0])
-
+    train_x = np.asarray(train[:, 1])
+    train_y = np.asarray(train[:, 0])
     trial_x = np.asarray(trial[:, 1])
     trial_y = np.asarray(trial_label[:, 0])
     test_x = np.asarray(test[:, 1])
     test_y = np.asarray(test[:, 0])
+
+    split_ratio = int(len(train_x) * 0.9)
+    trial_x = np.concatenate((trial_x, train_x[split_ratio:]))
+    trial_y = np.concatenate((trial_y, train_x[split_ratio:]))
+    train_x = train_x[:split_ratio]
+    train_y = train_y[:split_ratio]
 
     return train_x, train_y, trial_x, trial_y, test_x, test_y
 
@@ -92,7 +92,7 @@ def load_embeddings(filepath='data/glove.840B.300d.txt'):
                 i += 1
                 continue
             embeddings_index[word] = coefs
-        if i==0:
+        if i == 0:
             print("...embeddings loaded")
         else:
             print("...embeddings loaded with {} errors (can be ignored)".format(i))

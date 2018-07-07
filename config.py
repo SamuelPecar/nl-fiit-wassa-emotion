@@ -4,23 +4,8 @@ dim = 200
 units = 1024
 embeddings_path = 'data/emb.200d.txt'
 
-emoji2word = False
-
-# Partition of train dataset
-# partition = 10000
-partition = None
-
-
 # Output formatting
-
-# for silent
-# verbose = 0
-
-# for progess bar
 verbose = 1
-
-# for one line per epoch
-# verbose = 2
 
 # Early stopping
 early_stop_monitor = 'val_acc'
