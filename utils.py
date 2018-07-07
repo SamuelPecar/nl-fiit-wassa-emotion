@@ -25,7 +25,7 @@ def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', head
 
     split_ratio = int(len(train_x) * 0.9)
     trial_x = np.concatenate((trial_x, train_x[split_ratio:]))
-    trial_y = np.concatenate((trial_y, train_x[split_ratio:]))
+    trial_y = np.concatenate((trial_y, train_y[split_ratio:]))
     train_x = train_x[:split_ratio]
     train_y = train_y[:split_ratio]
 
