@@ -56,7 +56,7 @@ print('predict values model')
 probabilities = model.predict(test_x_indices)
 predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
 
-microaverage, macroaverage = evaluation.calculate_prf(trial_y_oh.tolist(), predictions)
+microaverage, macroaverage = evaluation.calculate_prf(test_y.tolist(), predictions)
 
 utils.create_output_csv(None, predictions, probabilities, test_x, file='data/test_results.csv')
 
