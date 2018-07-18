@@ -10,7 +10,7 @@ from modules.attention import Attention
 
 # val_f1_c
 def get_callbacks(early_stop_monitor='val_acc', early_stop_patience=2, early_stop_mode='auto'):
-    earlystop = EarlyStopping(monitor=early_stop_monitor, min_delta=0.003, patience=early_stop_patience, verbose=1, mode=early_stop_mode)
+    earlystop = EarlyStopping(monitor=early_stop_monitor, min_delta=0.001, patience=early_stop_patience, verbose=1, mode=early_stop_mode)
 
     return [earlystop]
 

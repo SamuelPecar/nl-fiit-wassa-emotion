@@ -5,7 +5,7 @@ units = 1024
 embeddings_path = 'data/emb.200d.txt'
 
 # Output formatting
-verbose = 1
+verbose = 2
 
 # Early stopping
 early_stop_monitor = 'val_acc'

@@ -23,11 +23,11 @@ def load_dataset(train_file, trial_file, trial_labels, test_file, sep='\t', head
     test_x = np.asarray(test[:, 1])
     test_y = np.asarray(test[:, 0])
 
-    split_ratio = int(len(train_x) * 0.9)
-    trial_x = np.concatenate((trial_x, train_x[split_ratio:]))
-    trial_y = np.concatenate((trial_y, train_y[split_ratio:]))
-    train_x = train_x[:split_ratio]
-    train_y = train_y[:split_ratio]
+    # split_ratio = int(len(train_x) * 0.9)
+    # trial_x = np.concatenate((trial_x, train_x[split_ratio:]))
+    # trial_y = np.concatenate((trial_y, train_y[split_ratio:]))
+    # train_x = train_x[:split_ratio]
+    # train_y = train_y[:split_ratio]
 
     return train_x, train_y, trial_x, trial_y, test_x, test_y
 

@@ -53,6 +53,4 @@ def preprocessing_pipeline(train_x, trial_x, test_x):
     print('Test preprocessing')
     test_x, max_len_test = preprocessing(test_x)
 
-    print(max_len_train, max_len_trial, max_len_test)
-
     return train_x, trial_x, test_x, max(max_len_train, max_len_trial, max_len_test)

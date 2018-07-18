@@ -11,7 +11,7 @@ if sys.version_info[0] < 3:
 
 print('Preparing data')
 
-train_x, train_y, trial_x, trial_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', 'data/test.csv')
+train_x, train_y, trial_x, trial_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', 'data/test-text-labels.csv')
 
 print('Preprocessing data')
 train_x, trial_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, trial_x, test_x)
