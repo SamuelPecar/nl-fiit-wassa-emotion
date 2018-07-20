@@ -2,6 +2,7 @@ epochs = 20
 batch_size = 64
 dim = 1024
 units = 1024
+# embeddings_path = "data/emb.200d.txt"
 embeddings_path = "https://tfhub.dev/google/elmo/2"
 
 # Output formatting
