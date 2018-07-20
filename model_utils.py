@@ -1,10 +1,13 @@
 from keras.models import Model
-from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate, Conv1D, MaxPooling1D, LeakyReLU, BatchNormalization, PReLU
+from keras.layers import LSTM, Dense, Input, Dropout, Activation, Embedding, Reshape, Concatenate, Conv1D, MaxPooling1D, LeakyReLU, BatchNormalization, PReLU, Lambda
 from keras.layers.wrappers import Bidirectional
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l1_l2
+import keras
 from keras.layers.noise import GaussianNoise
 import numpy as np
+import tensorflow as tf
+import tensorflow_hub as hub
 from modules.attention import Attention
 
 
@@ -42,6 +45,15 @@ def get_SM_model(input_shape, classes=6):
 
     return Model(inputs=sentences, outputs=x)
 
+def get_elmo_embedding_layer(shape, module_url                                                           ):
+    elmo = hub.Module(module_url, trainable=True)
+    sess = tf.Session()
+    keras.backend.set_session(sess)
+    sess.run(tf.global_variables_initializer())
+    sess.run(tf.tables_initializer())
+    def eml(x):
+        return elmo(inputs=tf.squeeze(tf.cast(x, tf.string)), signature="default", as_dict=True)["elmo"]
+    return Lambda(eml, output_shape=shape)
 
 def get_SM_model_2(input_shape, classes=6, reg_par=0.0):
     sentence = Input(shape=input_shape, dtype='float32')
@@ -63,7 +75,7 @@ def get_SM_model_2(input_shape, classes=6, reg_par=0.0):
 
 
 def get_model(input_shape, embedding_layer, classes=6, units=1024):
-    sentence_indices = Input(shape=input_shape, dtype='int32')
+    sentence_indices = Input(shape=input_shape, dtype=tf.string)
 
     embeddings = embedding_layer(sentence_indices)
     noised_embeddings = GaussianNoise(0.2)(embeddings)
