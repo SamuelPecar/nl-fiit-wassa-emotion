@@ -2,14 +2,11 @@
 import re
 from text_preprocessing import emoji, hashtag, char, word
 
-def escape_chars(text):
-    text = re.sub(r"'s", " is", text)
-    return text
-
 
 def preprocess_text(text):
-
     text = word.word_replace(text)
+    text = char.char_replacing(text)
+
     text = emoji.emoticon_to_emoji(text)
     text = word.word_expanding(text)
     text = word.word_negation(text)
@@ -17,7 +14,6 @@ def preprocess_text(text):
     text = char.char_escape(text)
     text = char.char_removing(text)
     text = char.currency_replace(text)
-    text = char.char_replacing(text)
 
     text = emoji.emoji_categorization(text)
     text = emoji.emoji_gender(text)
@@ -43,7 +39,6 @@ def preprocessing(x):
 
 
 def preprocessing_pipeline(train_x, trial_x, test_x):
-
     print('Train preprocessing')
     train_x, max_len_train = preprocessing(train_x)
 

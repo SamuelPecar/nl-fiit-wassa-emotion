@@ -17,6 +17,9 @@ def char_removing(text):
     text = re.sub(r"[•]", "", text)
     text = re.sub(r"[】【]", "", text)
     text = re.sub(r"[0-9]+", " ", text)
+    text = re.sub(r"[\{\}\(\)\[\]]+", " ", text)
+    text = re.sub(r"[*/\&|_<>~\+=\-\^™\\\%\"]+", " ", text)
+    text = re.sub(r"[‼.,;:?!…]+", " ", text)
 
     return text
 
@@ -24,11 +27,7 @@ def char_removing(text):
 def char_replacing(text):
     text = re.sub(r"[‘´’̇]+", "\'", text)
     text = re.sub(r"[#̇]+", "#", text)
-
-    text = re.sub(r"[”“❝„\"]", " \" ", text)
-    text = re.sub(r"[\{\}\(\)\[\]]+", " ", text)
-    text = re.sub(r"[*/\&|_<>~\+=\-\^™\\\%\"]+", " ", text)
-    text = re.sub(r"[‼.,;:?!…]+", " ", text)
+    text = re.sub(r"[”“❝„\"]", "\"", text)
 
     return text
 
