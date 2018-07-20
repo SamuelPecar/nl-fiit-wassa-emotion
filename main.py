@@ -5,6 +5,7 @@ import modules.preprocessing as preprocessing
 import modules.evaluation as evaluation
 import config
 import modules.slack as slack
+import tensorflow_hub as hub
 
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
@@ -29,11 +30,20 @@ test_x_indices = utils.sentences_to_indices(test_x, words_to_index, max_len=max_
 
 print('Creating embedding layer')
 
-word_embeddings = utils.load_embeddings(filepath=config.embeddings_path)
-embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=config.dim)
+if config.embeddings_path == "https://tfhub.dev/google/elmo/2":
+    shape = (1,)
+    embeddings_layer = model_utils.get_elmo_embedding_layer((max_string_length, config.dim), config.embeddings_path)
+    train_x_indices = train_x
+    trial_x_indices = trial_x
+    test_x_indices = test_x
+else:
+    shape = (max_string_length,)
+    word_embeddings = utils.load_embeddings(filepath=config.embeddings_path)
+    embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=config.dim)
 
 print('Creating model')
-model = model_utils.get_model((max_string_length,), embeddings_layer, config.classes, units=config.units)
+
+model = model_utils.get_model(shape, embeddings_layer, config.classes, units=config.units)
 
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
