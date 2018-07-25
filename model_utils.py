@@ -7,7 +7,13 @@ import keras
 from keras.layers.noise import GaussianNoise
 import numpy as np
 import tensorflow as tf
-import tensorflow_hub as hub
+if int(tf.__version__.split(".")[0]) >= 1 and int(tf.__version__.split(".")[1]) >= 7:
+    try:
+        import tensorflow_hub as hub
+    except:
+        print("Warning: tensorflow-hub cannot be imported, some features may be missing")
+else:
+    print("Warning: tensorflow-hub cannot be imported due to unsatisfied dependency(tensorflow >=1.7), some features may be missing")
 from modules.attention import Attention
 
 
@@ -45,7 +51,9 @@ def get_SM_model(input_shape, classes=6):
 
     return Model(inputs=sentences, outputs=x)
 
-def get_elmo_embedding_layer(shape, module_url                                                           ):
+def get_elmo_embedding_layer(shape, module_url):
+    if int(tf.__version__.split(".")[0]) == 0 or int(tf.__version__.split(".")[1]) < 7:
+        print("Error: Elmo cannot be loaded")
     elmo = hub.Module(module_url, trainable=True)
     sess = tf.Session()
     keras.backend.set_session(sess)
