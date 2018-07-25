@@ -5,7 +5,6 @@ import modules.preprocessing as preprocessing
 import modules.evaluation as evaluation
 import config
 import modules.slack as slack
-import tensorflow_hub as hub
 
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
