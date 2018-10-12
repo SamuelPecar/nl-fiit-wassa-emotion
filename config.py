@@ -1,9 +1,14 @@
-epochs = 20
+epochs = 60
 batch_size = 64
 dim = 1024
 units = 1024
-# embeddings_path = "data/emb.200d.txt"
-embeddings_path = "https://tfhub.dev/google/elmo/2"
+# Choose one:
+embeddings_path = "data/emb.200d.txt"
+#  = "https://tfhub.dev/google/elmo/2"
+# Choose one:
+# sentence_embedding = "USE-1"
+sentence_embedding = None
+# sentence_embedding = "USE-1"
 
 # Output formatting
 verbose = 2

@@ -5,11 +5,11 @@ import numpy
 import pandas as pd
 import torch
 import utils
-import preprocessing
+import modules.preprocessing as preprocessing
 import csv
 import tensorflow_hub as hub
 import model_utils
-import evaluation
+import modules.evaluation as evaluation
 import config
 import torch
 import generators
@@ -50,14 +50,25 @@ class AbstractEncoder():
 #
 #         return definitions_emb
 class UniversalSentenceEncoder(AbstractEncoder):
-    def __init__(self, all_sentences=None):
-        self.enc = hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/2")
-        self.session = tensorflow.Session()
-        self.session.run([tensorflow.global_variables_initializer(), tensorflow.tables_initializer()])
-        self.sentence_ph = tensorflow.placeholder(tensorflow.string, shape=(None))
-        self.encodings = self.enc(self.sentence_ph)
+    def __init__(self, all_sentences=None, type="large"):
+        if type == "large":
+            self.enc = hub.Module("https://tfhub.dev/google/universal-sentence-encoder-large/3")
+        elif type == "small":
+            self.enc = hub.Module("https://tfhub.dev/google/universal-sentence-encoder/2")
+        #self.session = tensorflow.Session()
+        #self.session.run([tensorflow.global_variables_initializer(), tensorflow.tables_initializer()])
+        #self.sentence_ph = tensorflow.placeholder(tensorflow.string, shape=(None))
+        #self.encodings = self.enc(self.sentence_ph)
     def use(self, sentences_to_embed):
         return self.session.run(self.encodings, feed_dict={self.sentence_ph: sentences_to_embed})
+    def use_lambda(self, x):
+        return self.enc(inputs=tensorflow.squeeze(tensorflow.cast(x, tensorflow.string)))
+    def getLambda(self, shape):
+        sess = tensorflow.Session()
+        keras.backend.set_session(sess)
+        sess.run(tensorflow.global_variables_initializer())
+        sess.run(tensorflow.tables_initializer())
+        return keras.layers.Lambda(self.use_lambda, output_shape=shape)
     @staticmethod
     def getName():
         return "USE"
@@ -81,11 +92,11 @@ class Infersent(AbstractEncoder):
         return definitions_emb
 
     def use_lambda(self, sentences_to_embed):
-        definitions_emb = numpy.zeros((32, self.getSize()))
-        for index in range(0, 32):
-            definitions_emb[index] = self.infersent.encode([sentences_to_embed[index]], tokenize=True)
+        # definitions_emb = numpy.zeros((config.batch_size, self.getSize()))
+        # for index in range(0, config.batch_size):
+        #     definitions_emb[index] = self.infersent.encode([sentences_to_embed[index]], tokenize=True)
 
-        return definitions_emb
+        return self.infersent.encode([sentences_to_embed],tokenize=True)
 
     def getLambda(self):
         return keras.layers.Lambda(self.use_lambda)
@@ -100,8 +111,10 @@ class Infersent(AbstractEncoder):
 
 def prepare_data_file(encoder, dataset_size=10000, batch_size=128, mode='original'):  #original, reconstructed, both
     print("...loading&preprocessing dataset")
-    train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/trial.labels', partition=dataset_size)
-    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=config.emoji2word)
+    train_x, train_y, test_x, test_y, _, _ = utils.load_dataset('data/train_ekphrasis.csv', 'data/trial_ekphrasis.csv', 'data/trial.labels', 'data/test_ekphrasis.csv')
+    train_x = train_x[:dataset_size]
+    train_y = train_y[:dataset_size]
+    train_x, test_x, _,max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, _)
     print("...preparing candidate sentences:")
     train_x_list = list()
     train_y_list = list()
@@ -141,7 +154,7 @@ def prepare_data_file(encoder, dataset_size=10000, batch_size=128, mode='origina
                 if x % n_of_elements_in_row == 0:
                     new_row = train_y_list[j]
                     j += 1
-                new_row += "," + numpy.array_str(embeddings[x]).replace('\n', '')
+                new_row += "," + numpy.array_str(embeddings[x]).replace('\n', '') + "," + train_x_list[i*batch_size+x]
                 if x % n_of_elements_in_row == n_of_elements_in_row-1:
                     csv_writer.writerow([new_row])
             if (i+1)*batch_size >= len(train_x_list):
@@ -192,9 +205,9 @@ def load_data(filename, partition=None, candidates=True):
 def experiment_1(encoder):
     print("...loading&preprocessing dataset")
     #train_x, train_y = load_data("data/enRep_USE_None.csv", 40000)
-    train_x, train_y, test_x, test_y = utils.load_dataset('data/train.csv', 'data/trial.csv', 'data/test.labels',
-                                                          partition=1000)
-    train_x, test_x, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, emoji2word=False)
+    train_x, train_y, test_x, test_y, _, _ = utils.load_dataset('data/train.csv', 'data/trial.csv',
+                                                                'data/trial.labels', 'data/test.csv')
+    train_x, test_x, _, max_string_length = preprocessing.preprocessing_pipeline(train_x, test_x, _)
     print("...creating encoder instance")
     encoder_instance = encoder(train_x)
     print("...encoding sentences")
@@ -235,8 +248,8 @@ def experiment_1(encoder):
 def prepare_testdata():
     print("...Preparing test set")
 
-    test = pd.read_csv('data/trial.csv', sep='\t', header=None).values
-    test_label = pd.read_csv('data/trial.labels', sep="\t", header=None).values
+    test = pd.read_csv('data/trial.csv', sep='\t', header=None, quoting=3).values
+    test_label = pd.read_csv('data/trial.labels', sep="\t", header=None, quoting=3).values
 
     test_x = numpy.asarray(test[:, 1])
     test_label = numpy.asarray(test_label[:, 0])
@@ -264,23 +277,20 @@ def prepare_testdata():
 def experiment_2(): # w/o candidates
     test_x_s, test_y, test_label = prepare_testdata()
     print("...initializing model")
-    model = model_utils.get_SM_model_2((4096,), 6)
+    model = model_utils.get_SM_model_2((4096,), embedding_layer=None, units=config.units)
     model.summary()
     model.compile(loss='categorical_crossentropy', optimizer='adam',
-                  metrics=['accuracy', evaluation.f1, evaluation.precision, evaluation.recall])
+                  metrics=['accuracy'])
     callbacks = model_utils.get_callbacks(early_stop_monitor=config.early_stop_monitor,
                                           early_stop_patience=config.early_stop_patience,
                                           early_stop_mode=config.early_stop_mode)
 
-    model_info = model.fit_generator(generators.MySMGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= generators.MySMValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=40, verbose=2)
+    model_info = model.fit_generator(generators.MySMGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), validation_data= generators.MySMValidationGenerator("data/enRep_InferSent_None_original.csv", batch=32, embedding_size=4096), epochs=40,callbacks=callbacks, verbose=2)
 
     print('...Evaluation')
-    loss, acc, f1, precision, recall = model.evaluate(test_x_s, test_y, verbose=2)
+    loss, acc = model.evaluate(test_x_s, test_y, verbose=2)
     print("...Loss = ", loss)
     print("...Test accuracy = ", acc)
-    print("...F1 = ", f1)
-    print("...Precision = ", precision)
-    print("...Recall = ", recall)
 
     probabilities = model.predict(test_x_s)
     predictions = utils.indices_to_labels(probabilities.argmax(axis=-1), config.index_to_label)
@@ -289,12 +299,9 @@ def experiment_2(): # w/o candidates
 
 
 if __name__ == '__main__':
-    #experiment_1(Infersent)
+    # if you want to run experiments with InferSent first prepare data_file and then run experiment_2
     experiment_2()
     #prepare_data_file(Infersent, None, mode='original')
-    #prepare_data_file(UniversalSentenceEncoder, None)
-    #load_data("data/enRep_InferSent_1000.csv", 200, candidates=False)
-    #prepare_testdata()
 
 
 

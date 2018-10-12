@@ -5,6 +5,8 @@ import modules.preprocessing as preprocessing
 import modules.evaluation as evaluation
 import config
 import modules.slack as slack
+import SMApproach
+import tensorflow as tf
 
 if sys.version_info[0] < 3:
     raise Exception("Must be using Python 3")
@@ -35,14 +37,33 @@ if config.embeddings_path == "https://tfhub.dev/google/elmo/2":
     train_x_indices = train_x
     trial_x_indices = trial_x
     test_x_indices = test_x
+    inp_type = tf.string
+elif config.sentence_embedding == "USE-1":
+    shape = (1,)
+    train_x_indices = train_x
+    trial_x_indices = trial_x
+    test_x_indices = test_x
+    encoder = SMApproach.UniversalSentenceEncoder(type="small")
+    embeddings_layer = encoder.getLambda((encoder.getSize(),))
+elif config.sentence_embedding == "USE-2":
+    shape = (1,)
+    train_x_indices = train_x
+    trial_x_indices = trial_x
+    test_x_indices = test_x
+    encoder = SMApproach.UniversalSentenceEncoder(type="large")
+    embeddings_layer = encoder.getLambda((encoder.getSize(), ))
 else:
     shape = (max_string_length,)
     word_embeddings = utils.load_embeddings(filepath=config.embeddings_path)
     embeddings_layer = model_utils.create_embedding_layer(word_embeddings, words_to_index, len(words_to_index), output_dim=config.dim)
+    inp_type = tf.float32
 
 print('Creating model')
 
-model = model_utils.get_model(shape, embeddings_layer, config.classes, units=config.units)
+if config.sentence_embedding is not None:
+    model = model_utils.get_SM_model_2(shape, embedding_layer=embeddings_layer, units=config.units, dtype=tf.string)
+else:
+    model = model_utils.get_model(shape, embeddings_layer, config.classes, units=config.units, dtype=inp_type)
 
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])

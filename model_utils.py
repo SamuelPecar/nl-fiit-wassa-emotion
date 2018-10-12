@@ -63,27 +63,23 @@ def get_elmo_embedding_layer(shape, module_url):
         return elmo(inputs=tf.squeeze(tf.cast(x, tf.string)), signature="default", as_dict=True)["elmo"]
     return Lambda(eml, output_shape=shape)
 
-def get_SM_model_2(input_shape, classes=6, reg_par=0.0):
-    sentence = Input(shape=input_shape, dtype='float32')
+def get_SM_model_2(input_shape, embedding_layer, units, dtype='float32', classes=6, reg_par=0.0):
+    sentence = Input(shape=input_shape, dtype=dtype)
 
-    x = GaussianNoise(0.05)(sentence)
-    x_d = Dropout(0.1)(x)
-    x = Dense(units=2048, activation=None, kernel_regularizer=l1_l2(reg_par, reg_par), bias_regularizer=l1_l2(reg_par, reg_par))(x_d)
+    if embedding_layer is not None:
+        x = embedding_layer(sentence)
+    else:
+        x = sentence
+
+    x = Dense(units=units, activation=None)(x)
     x = PReLU()(x)
-    y = Dense(units=2048, activation="tanh", kernel_regularizer=l1_l2(reg_par, reg_par), bias_regularizer=l1_l2(reg_par, reg_par))(x_d)
-    x = Concatenate(axis=-1)([x, y])
-    x = Dropout(rate=0.1)(x)
-    x = BatchNormalization(axis=1)(x)
-    x = Dense(units=4096, activation=None, kernel_regularizer=l1_l2(reg_par, reg_par), bias_regularizer=l1_l2(reg_par, reg_par))(x)
-    x = PReLU()(x)
-    x = BatchNormalization(axis=1)(x)
-    x = Dense(units=classes, activation="softmax", kernel_regularizer=l1_l2(reg_par, reg_par), bias_regularizer=l1_l2(reg_par, reg_par))(x)
+    x = Dense(units=6, activation="softmax")(x)
 
     return Model(inputs=sentence, outputs=x)
 
 
-def get_model(input_shape, embedding_layer, classes=6, units=1024):
-    sentence_indices = Input(shape=input_shape, dtype=tf.string)
+def get_model(input_shape, embedding_layer, classes=6, units=1024, dtype=tf.float32):
+    sentence_indices = Input(shape=input_shape, dtype=dtype)
 
     embeddings = embedding_layer(sentence_indices)
     noised_embeddings = GaussianNoise(0.2)(embeddings)
