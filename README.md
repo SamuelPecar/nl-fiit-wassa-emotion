@@ -1,12 +1,10 @@
 # Implicit emotion recognition
 
-# Running in docker container
-nohup python main.py & clear
-tail -f nohup.out
-
+[WASSA 2018 Implicit Emotion Shared Task](http://implicitemotions.wassa2018.com/)
+## Description
 TODO description
 
-Citation:
+## Citation:
 ```
 @InProceedings{W18-6231,
   author = 	"Pecar, Samuel
@@ -23,3 +21,7 @@ Citation:
   url = 	"http://aclweb.org/anthology/W18-6231"
 }
 ```
+
+## Running in docker container
+nohup python main.py & clear
+tail -f nohup.out
